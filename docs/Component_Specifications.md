@@ -22,4 +22,5 @@
     - Adjust search weightings based on search modality 
   - Filter results by user preference
 
-![Book Recommendation Flow](/Users/lawrie/Downloads/Bookworm2.png)
+### <ins>Book Recommendation Flow:</ins>
+![Image](https://github.com/jacobp24/bookworm_rec/assets/85261391/8409d54d-e8bc-4b4b-a6e5-ded6c12e8d8d "Book Recommendation Flow")
