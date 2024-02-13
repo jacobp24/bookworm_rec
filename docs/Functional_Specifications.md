@@ -1,4 +1,4 @@
-```markdown
+
 # Functional Specification
 
 ## Background:
@@ -55,5 +55,4 @@ We are creating an application to recommend books based on user input about the 
 - **User:** Clicks “Search Now” box 
 - **System:** Gives the top 10 highest rated books in the Mystery genre, sorted by rating 
 - [Stretch]: Spongebob clicks on a book that he likes and is provided with more details, such as whether the book is available through Seattle Public library 
-```
 
