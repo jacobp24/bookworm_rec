@@ -15,12 +15,14 @@
 - [Stretch] Allow user to find book on goodreads/amazon/library or other 
 
 ## Component #3: Search/Recommender Engine 
+- Receives user search prefrences from UI input component (search_mode, search_value, min_star_rating, number_reviewers)
 - Orchestration: What type of search to do (will depend on user input): 
   - If genre - simple search for highest rated matching results, filter by user preference
   - Otherwise
     - Use hybrid (keyword + semantic search) 
     - Adjust search weightings based on search modality 
   - Filter results by user preference
+  - Sends results (top N book and any display metadata) to UI Output component
 
 ### <ins>Book Recommendation Flow:</ins>
 ![Image](https://github.com/jacobp24/bookworm_rec/assets/85261391/8409d54d-e8bc-4b4b-a6e5-ded6c12e8d8d "Book Recommendation Flow")
