@@ -97,8 +97,8 @@ def main():
 
     
     # Add introductory text
-    st.write("Welcome to The Bookish Butterfly! An literary guide designed for bookworms, aiding in the exploration of new books tailored to your preferences. "
-             "Simply choose how you want to prioritize your search, input your favorite book, author, plot, gor enre. "
+    st.write("Welcome to The Bookish Butterfly! An literary guide designed for bookworms, aiding in the exploration of new books with tailored preferences. "
+             "Simply choose how you want to prioritize your search, input your favorite book, author, plot, or genre. "
              "Adjust the search filters as desired, and click 'Search Now' to find your next literary adventure.")
 
     # Display search mode, value, and button
