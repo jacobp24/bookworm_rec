@@ -35,7 +35,7 @@ GENRES = ["Science", "Mystery", "Other"]
 
 # DEFINE EACH UI ELEMENT AS A SEPARATE FUNCTION 
 def display_avg_ratings_slider():
-    return st.slider("Exclude Books with Average Ratings Lower than:", min_value=0.0, max_value=5.0, \
+    return st.slider("Exclude Books with Average Ratings Lower than:", min_value=0.0, max_value=10.0, \
                      value=3.0, step=0.5, key="Ave. Ratings Slider", help="Set the minimum average rating.")
 
 def display_num_ratings_slider():
@@ -80,7 +80,7 @@ def execute_query(search_mode, search_value, min_ave_rating, min_num_ratings):
 
 def main():
     # Display header banner with stock image of books
-    st.image("/Users/lawrie/Data515/Project/books_banner.png", use_column_width=True)
+    st.image("books_banner.png", use_column_width=True)
 
 
     TITLE_IMAGE = "butterfly.png"
