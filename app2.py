@@ -2,6 +2,7 @@ import streamlit as st
 import numpy as np 
 import pandas as pd 
 import base64
+from search_wrapper import search_wrapper as search_wrapper
 
 # Import Material components for styling
 import streamlit.components.v1 as components
@@ -36,11 +37,11 @@ GENRES = ["Science", "Mystery", "Other"]
 # DEFINE EACH UI ELEMENT AS A SEPARATE FUNCTION 
 def display_avg_ratings_slider():
     return st.slider("Exclude Books with Average Ratings Lower than:", min_value=0.0, max_value=10.0, \
-                     value=3.0, step=0.5, key="Ave. Ratings Slider", help="Set the minimum average rating.")
+                     value=0.0, step=0.5, key="Ave. Ratings Slider", help="Set the minimum average rating.")
 
 def display_num_ratings_slider():
     return st.slider("Exclude Books that have been rated by fewer than:", min_value=0, max_value=50, \
-                    value=25, step=1, key="Num. Ratings Slider", help="Set the minimum number of ratings.")
+                    value=0, step=1, key="Num. Ratings Slider", help="Set the minimum number of ratings.")
     
 def display_search_mode_UI():
     help_text_string = "Choose how you want to prioritize your search." 
@@ -115,6 +116,8 @@ def main():
     if search_val not in ["", None]:
         st.write("Click 'Search Now' when ready.")
         if search_button:
-            execute_query(search_mode, search_val, min_ave_rating, min_num_ratings)
+            results = search_wrapper(search_mode, search_val, min_ave_rating, min_num_ratings)
+            col_to_show = ["book_title", "author", "Book-Rating", "RatingCount"]
+            st.write(results[col_to_show])
 
 main()
