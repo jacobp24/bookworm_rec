@@ -6,9 +6,9 @@ import ast
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 
-df = pd.read_csv("data/data_w_embeddings_updated.csv")
-distances = np.load('data/distances.npy')
-indices = np.load('data/indices.npy')
+df = pd.read_csv("data/complete_w_ratings.csv")
+#distances = np.load('data/distances.npy')
+#indices = np.load('data/indices.npy')
 
 def parse_genres(genre_str):
     try:
@@ -56,24 +56,24 @@ def get_keyword_results(df, query, num_books=10):
     
     return df.iloc[top_book_indices]
 
-def get_semantic_results(book_index, num_books=10):
+""" def get_semantic_results(book_index, num_books=10):
     # Fetch the indices of the most similar books for the given book index
     similar_books_indices = indices[book_index][:num_books]
     
     # Optionally, you might want to use distances to filter or sort the results further
     # For simplicity, this example returns the top N similar books directly
     
-    return similar_books_indices
+    return similar_books_indices """
 
-def query_to_index(df, query, vectorizer=None):
-    """
+""" def query_to_index(df, query, vectorizer=None):
+    
     Map a search query to the most relevant book index in the dataset.
 
     :param df: DataFrame containing the books dataset.
     :param query: The search query as a string.
     :param vectorizer: Pre-fitted TF-IDF Vectorizer (optional).
     :return: Index of the most relevant book based on the query.
-    """
+    
     # If a vectorizer is not provided, initialize and fit one based on the 'combined_text' column
     if vectorizer is None:
         from sklearn.feature_extraction.text import TfidfVectorizer
@@ -90,10 +90,9 @@ def query_to_index(df, query, vectorizer=None):
     # Find the index of the most relevant book
     most_relevant_index = cosine_similarities.argsort()[-1]
 
-    return most_relevant_index
+    return most_relevant_index """
 
-def hybrid_search(df, query, distances, indices, num_books=10, alpha=0.5):
-    """
+""" def hybrid_search(df, query, distances, indices, num_books=10, alpha=0.5):
     Perform a hybrid search combining keyword and semantic search results.
 
     :param df: DataFrame containing the books dataset.
@@ -103,7 +102,7 @@ def hybrid_search(df, query, distances, indices, num_books=10, alpha=0.5):
     :param num_books: Number of books to return.
     :param alpha: Weight for blending the results (0 to 1). Closer to 0 favors keyword, closer to 1 favors semantic.
     :return: DataFrame of the top N books based on hybrid search criteria.
-    """
+    
 
     # Step 1: Perform Keyword-Based Search
     keyword_results = get_keyword_results(df, query, num_books)
@@ -126,3 +125,4 @@ def hybrid_search(df, query, distances, indices, num_books=10, alpha=0.5):
     combined_results = df.loc[combined_indices].head(num_books)
 
     return combined_results
+ """
