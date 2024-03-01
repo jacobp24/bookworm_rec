@@ -4,8 +4,8 @@ import numpy as np
 from thefuzz import fuzz
 
 df = pd.read_csv("data/complete_w_ratings.csv")
-distances = np.load('data/distances.npy')
-indices = np.load('data/indices.npy')
+#distances = np.load('data/distances.npy')
+#indices = np.load('data/indices.npy')
 
 def filter(results, min_ave_ratings, min_num_rating):
     # Filter by min ave ratings if min >0.0
@@ -43,14 +43,7 @@ def calculate_matching_ratio(df, query, ratio = 80):
 def search_wrapper(search_mode, search_value, min_ave_rating, min_num_ratings):
     if (search_mode == "Author2"):
         results = calculate_matching_ratio(df, search_value).head(10)
-        print("Author2 mode")
-        print(results.head())
     else: 
         results = get_keyword_results(df,search_value)
-        print("other mode")
-        print(results.head())
-    print("Out of the if loop")
-    print(results.head())
     results_filtered = filter(results, min_ave_rating, min_num_ratings)
-    print(results_filtered.head())
     return results_filtered
