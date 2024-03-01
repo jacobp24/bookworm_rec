@@ -1,0 +1,45 @@
+
+/* Header style */
+.container {
+    display: flex;
+    align-items: center; /* Center items vertically */
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+}
+
+.title-text {
+    font-weight: bold;
+    font-size: 50px;
+    color: #007bff; /* Blue color */
+    margin: 0; /* Remove default margin */
+}
+
+.title-img {
+    width: 50px; /* Set width of logo image */
+    height: auto; /* Maintain aspect ratio */
+    margin-right: 10px; /* Add some space between logo and text */
+}
+
+
+/* Selectbox */
+div[data-baseweb="select"] {
+    width: 100%;
+}
+
+/* Text Input */
+div[data-baseweb="input"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* Help Text */
+p.help-text {
+    color: #6c757d; /* Gray help text color */
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
