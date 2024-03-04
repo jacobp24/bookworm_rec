@@ -1,21 +1,32 @@
-from search import get_keyword_results as get_keyword_results
+import search
 import pandas as pd
 import numpy as np
 from thefuzz import fuzz
 
-df = pd.read_csv("data/complete_w_ratings.csv")
-#distances = np.load('data/distances.npy')
-#indices = np.load('data/indices.npy')
+# adding the df
+# Read the first dataframe, which will provide the column names for the combined dataframe
+df1 = pd.read_csv("data/complete_w_embeddings/complete_w_embeddings.csv_part_1.csv")
 
+# Read the remaining dataframes without adding their headers as column names
+df2 = pd.read_csv("data/complete_w_embeddings/complete_w_embeddings.csv_part_2.csv", header=None)
+df3 = pd.read_csv("data/complete_w_embeddings/complete_w_embeddings.csv_part_3.csv", header=None)
+df4 = pd.read_csv("data/complete_w_embeddings/complete_w_embeddings.csv_part_4.csv", header=None)
+df2.columns = df1.columns
+df3.columns = df1.columns
+df4.columns = df1.columns
+
+df = pd.concat([df1, df2, df3, df4], ignore_index=True)
+
+# Filter
 def filter(results, min_ave_ratings, min_num_rating):
-    # Filter by min ave ratings if min >0.0
+    # Filter by min ave ratings if min > 0.0
     # Otherwise keep all, including "none" values 
     if min_ave_ratings != 0.0:
         subset_df = results[results['Book-Rating'] > min_ave_ratings]
     else:
         subset_df = results
     
-    # Filter by min num ratings if min_num >0
+    # Filter by min num ratings if min_num > 0
     # Otherwise keep all, including "none" values 
     if min_num_rating != 0:
         results_filtered = subset_df[subset_df['RatingCount'] > min_num_rating]
@@ -23,27 +34,14 @@ def filter(results, min_ave_ratings, min_num_rating):
         results_filtered = subset_df
     return results_filtered
 
-# Function for fuzzy matching for author2 search
-def calculate_matching_ratio(df, query, ratio = 80):
-   
-    def calculate_ratio(row):
-        return fuzz.ratio(row['author'], query)
-
-    # Apply the function to each row and store the result in a new column
-    df['ratio'] = df.apply(calculate_ratio, axis=1)
-   
-
-    # filter the database to only those rows with match > ratio
-    result_df = df[df["ratio"] > ratio]
-    
-    
-    return result_df
-
-
-def search_wrapper(search_mode, search_value, min_ave_rating, min_num_ratings):
+def search_wrapper(search_mode, search_value, min_ave_rating, min_num_ratings, num_books=10):
     if (search_mode == "Author2"):
-        results = calculate_matching_ratio(df, search_value).head(10)
+        results = search.author2_search(df, search_value, num_books)
+    if (search_mode == "Title"):
+        results = search.semantic_search(df, search_value, num_books)
+    if (search_mode == "Plot"):
+        results = search.plot_semantic_search(df, search_value, num_books)
     else: 
-        results = get_keyword_results(df,search_value)
+        results = search.keyword_search(df, search_value, num_books)
     results_filtered = filter(results, min_ave_rating, min_num_ratings)
     return results_filtered
