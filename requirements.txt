@@ -4,3 +4,5 @@ thefuzz==0.22.1
 numpy==1.26
 pandas==2.1
 matplotlib==3.8
+python-dotenv==1.0.1
+voyageai==0.1.7

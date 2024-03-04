@@ -14,26 +14,26 @@ import voyageai
 load_dotenv()
 
 # API for embeddings voyage
-api_key = os.getenv("API_KEY")
+api_key = os.getenv("VOYAGE_API_KEY")
 vo = voyageai.Client(api_key=api_key)
 
 # Load data
 # adding the df
 # Read the first dataframe, which will provide the column names for the combined dataframe
-df1 = pd.read_csv("data/complete_w_embeddings/complete_w_embeddings.csv_part_1.csv")
+df1 = pd.read_csv("bookworm/data/complete_w_embeddings/complete_w_embeddings.csv_part_1.csv")
 
 # Read the remaining dataframes without adding their headers as column names
-df2 = pd.read_csv("data/complete_w_embeddings/complete_w_embeddings.csv_part_2.csv", header=None)
-df3 = pd.read_csv("data/complete_w_embeddings/complete_w_embeddings.csv_part_3.csv", header=None)
-df4 = pd.read_csv("data/complete_w_embeddings/complete_w_embeddings.csv_part_4.csv", header=None)
+df2 = pd.read_csv("bookworm/data/complete_w_embeddings/complete_w_embeddings.csv_part_2.csv", header=None)
+df3 = pd.read_csv("bookworm/data/complete_w_embeddings/complete_w_embeddings.csv_part_3.csv", header=None)
+df4 = pd.read_csv("bookworm/data/complete_w_embeddings/complete_w_embeddings.csv_part_4.csv", header=None)
 df2.columns = df1.columns
 df3.columns = df1.columns
 df4.columns = df1.columns
 
 df = pd.concat([df1, df2, df3, df4], ignore_index=True)
 
-distances = np.load('data/distances_updated.npy')
-indices = np.load('data/indices_updated.npy')
+distances = np.load('bookworm/data/distances_updated.npy')
+indices = np.load('bookworm/data/indices_updated.npy')
 
 class HelperFunctions:
     @staticmethod
