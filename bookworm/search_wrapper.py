@@ -5,13 +5,12 @@ from thefuzz import fuzz
 
 # adding the df
 # Read the first dataframe, which will provide the column names for the combined dataframe
-df1 = pd.read_csv("C:/Users/stlp/Desktop/Geeky/Software/bookworm_rec/data/complete_w_embeddings/complete_w_embeddings.csv_part_1.csv")
+df1 = pd.read_csv("data/complete_w_embeddings/complete_w_embeddings.csv_part_1.csv")
 
 # Read the remaining dataframes without adding their headers as column names
-df2 = pd.read_csv("C:/Users/stlp/Desktop/Geeky/Software/bookworm_rec/data/complete_w_embeddings/complete_w_embeddings.csv_part_2.csv", header=None)
-df3 = pd.read_csv("C:/Users/stlp/Desktop/Geeky/Software/bookworm_rec/data/complete_w_embeddings/complete_w_embeddings.csv_part_3.csv", header=None)
-df4 = pd.read_csv("C:/Users/stlp/Desktop/Geeky/Software/bookworm_rec/data/complete_w_embeddings/complete_w_embeddings.csv_part_4.csv", header=None)
-
+df2 = pd.read_csv("data/complete_w_embeddings/complete_w_embeddings.csv_part_2.csv", header=None)
+df3 = pd.read_csv("data/complete_w_embeddings/complete_w_embeddings.csv_part_3.csv", header=None)
+df4 = pd.read_csv("data/complete_w_embeddings/complete_w_embeddings.csv_part_4.csv", header=None)
 df2.columns = df1.columns
 df3.columns = df1.columns
 df4.columns = df1.columns
