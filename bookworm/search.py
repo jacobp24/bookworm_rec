@@ -1,128 +1,122 @@
 import pandas as pd
 import numpy as np
-
 import ast
-
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
+from thefuzz import fuzz
+import os
+from dotenv import load_dotenv
+from sklearn.metrics.pairwise import cosine_similarity
 
-df = pd.read_csv("data/complete_w_ratings.csv")
-#distances = np.load('data/distances.npy')
-#indices = np.load('data/indices.npy')
+import voyageai
 
-def parse_genres(genre_str):
-    try:
-        # Safely evaluate the string as a dictionary
-        genres_dict = ast.literal_eval(genre_str)
-        # Extract genre names and join them into a single string
-        genres_text = ', '.join(genres_dict.values())
-    except (ValueError, SyntaxError):
-        # Handle cases where the genre string is malformed or empty
-        genres_text = 'Unknown Genre'
-    return genres_text
+# Load environment variables from .env file
+load_dotenv()
 
-# Function to preprocess text
-def preprocess_text(text):
-    """Basic text preprocessing"""
-    text = str(text).lower()  # Convert NaN to 'nan' string, then lowercase text
-    # Additional preprocessing here (e.g., remove punctuation, stopwords)
-    return text
+# API for embeddings voyage
+api_key = os.getenv("API_KEY")
+vo = voyageai.Client(api_key=api_key)
 
-# Assuming df is your DataFrame containing the books dataset with modified 'genre'
-def get_keyword_results(df, query, num_books=10):
-    # Fill NaN values with a placeholder for other fields if necessary
-    #df.fillna({'author_file1': 'Unknown', 'book_title_file1': 'Unknown', 'genre_file1': 'Unknown', 'summary_file1': 'No Summary Available'}, inplace=True)
+# Load data
+# adding the df
+# Read the first dataframe, which will provide the column names for the combined dataframe
+df1 = pd.read_csv("C:/Users/stlp/Desktop/Geeky/Software/bookworm_rec/data/complete_w_embeddings/complete_w_embeddings.csv_part_1.csv")
+
+# Read the remaining dataframes without adding their headers as column names
+df2 = pd.read_csv("C:/Users/stlp/Desktop/Geeky/Software/bookworm_rec/data/complete_w_embeddings/complete_w_embeddings.csv_part_2.csv", header=None)
+df3 = pd.read_csv("C:/Users/stlp/Desktop/Geeky/Software/bookworm_rec/data/complete_w_embeddings/complete_w_embeddings.csv_part_3.csv", header=None)
+df4 = pd.read_csv("C:/Users/stlp/Desktop/Geeky/Software/bookworm_rec/data/complete_w_embeddings/complete_w_embeddings.csv_part_4.csv", header=None)
+
+df2.columns = df1.columns
+df3.columns = df1.columns
+df4.columns = df1.columns
+
+df = pd.concat([df1, df2, df3, df4], ignore_index=True)
+
+distances = np.load('data/distances_updated.npy')
+indices = np.load('data/indices_updated.npy')
+
+class HelperFunctions:
+    @staticmethod
+    def parse_genres(genre_str):
+        try:
+            genres_dict = ast.literal_eval(genre_str)
+            genres_text = ', '.join(genres_dict.values())
+        except (ValueError, SyntaxError):
+            genres_text = 'Unknown Genre'
+        return genres_text
+
+    @staticmethod
+    def preprocess_text(text):
+        text = str(text).lower()
+        return text
+
+    @staticmethod
+    def get_semantic_results(book_index, num_books=10):
+        similar_books_indices = indices[book_index][:num_books]
+        return similar_books_indices
+
+    @staticmethod
+    def query_to_index(df, query, vectorizer=None):
+        df.fillna({'author': 'Unknown', 'book_title': 'Unknown', 'genre': 'Unknown', 'summary': 'No Summary Available'}, inplace=True)
+        df['combined_text'] = df.apply(lambda x: HelperFunctions.preprocess_text(f"{x['book_title']} {x['author']} {HelperFunctions.parse_genres(x['genre'])} {x['summary']}"), axis=1)
+ 
+        if vectorizer is None:
+            vectorizer = TfidfVectorizer(stop_words='english')
+            vectorizer.fit(df['combined_text'])
+        query_vec = vectorizer.transform([query])
+        cosine_similarities = linear_kernel(query_vec, vectorizer.transform(df['combined_text'])).flatten()
+        most_relevant_index = cosine_similarities.argsort()[-1]
+        return most_relevant_index
+
+def keyword_search(df, query, num_books=10):
     df.fillna({'author': 'Unknown', 'book_title': 'Unknown', 'genre': 'Unknown', 'summary': 'No Summary Available'}, inplace=True)
-
-    # Combine text from different fields into a single text column
-    #df['combined_text'] = (df['book_title_file1'] + ' ' + df['author_file1'] + ' ' + df['genre_file1'] + ' ' + df['summary_file1']).apply(preprocess_text)
-    df['combined_text'] = (df['book_title'] + ' ' + df['author'] + ' ' + df['genre'] + ' ' + df['summary']).apply(preprocess_text)
-    
-
-    query = preprocess_text(query)
-    
-    # Use TF-IDF Vectorizer to transform texts into feature vectors
+    df['combined_text'] = df.apply(lambda x: HelperFunctions.preprocess_text(f"{x['book_title']} {x['author']} {HelperFunctions.parse_genres(x['genre'])} {x['summary']}"), axis=1)
+    query = HelperFunctions.preprocess_text(query)
     vectorizer = TfidfVectorizer(stop_words='english')
     tfidf_matrix = vectorizer.fit_transform(df['combined_text'])
-    
-    # Vectorize the query
     query_vec = vectorizer.transform([query])
-    
-    # Compute the cosine similarity between query_vec and all book vectors
     cosine_similarities = linear_kernel(query_vec, tfidf_matrix).flatten()
-    
-    # Get the top N matching books
     top_book_indices = cosine_similarities.argsort()[-num_books:][::-1]
-    
-    return df.iloc[top_book_indices]
 
-""" def get_semantic_results(book_index, num_books=10):
-    # Fetch the indices of the most similar books for the given book index
-    similar_books_indices = indices[book_index][:num_books]
-    
-    # Optionally, you might want to use distances to filter or sort the results further
-    # For simplicity, this example returns the top N similar books directly
-    
-    return similar_books_indices """
-
-""" def query_to_index(df, query, vectorizer=None):
-    
-    Map a search query to the most relevant book index in the dataset.
-
-    :param df: DataFrame containing the books dataset.
-    :param query: The search query as a string.
-    :param vectorizer: Pre-fitted TF-IDF Vectorizer (optional).
-    :return: Index of the most relevant book based on the query.
-    
-    # If a vectorizer is not provided, initialize and fit one based on the 'combined_text' column
-    if vectorizer is None:
-        from sklearn.feature_extraction.text import TfidfVectorizer
-        vectorizer = TfidfVectorizer(stop_words='english')
-        vectorizer.fit(df['combined_text'])
-
-    # Vectorize the query using the provided or newly created vectorizer
-    query_vec = vectorizer.transform([query])
-
-    # Compute cosine similarity between the query vector and all book vectors
-    from sklearn.metrics.pairwise import linear_kernel
-    cosine_similarities = linear_kernel(query_vec, vectorizer.transform(df['combined_text'])).flatten()
-
-    # Find the index of the most relevant book
-    most_relevant_index = cosine_similarities.argsort()[-1]
-
-    return most_relevant_index """
-
-""" def hybrid_search(df, query, distances, indices, num_books=10, alpha=0.5):
-    Perform a hybrid search combining keyword and semantic search results.
-
-    :param df: DataFrame containing the books dataset.
-    :param query: Search query string.
-    :param distances: Numpy array of precomputed semantic distances.
-    :param indices: Numpy array of precomputed semantic indices.
-    :param num_books: Number of books to return.
-    :param alpha: Weight for blending the results (0 to 1). Closer to 0 favors keyword, closer to 1 favors semantic.
-    :return: DataFrame of the top N books based on hybrid search criteria.
-    
-
-    # Step 1: Perform Keyword-Based Search
-    keyword_results = get_keyword_results(df, query, num_books)
+    keyword_results = df.iloc[top_book_indices]
     keyword_indices = keyword_results.index.tolist()
-        
-    # Step 2: Map query to an index for Semantic Search (this step is conceptual and needs a concrete implementation)
-    # For demonstration, let's assume a function `query_to_index` that maps a query to an index for semantic search
-    book_index = query_to_index(df, query)  # This function needs to be defined based on your application's specifics
-    semantic_indices = get_semantic_results(book_index, num_books)
+    results = df.loc[keyword_indices].head(num_books)
+    return results
+
+def semantic_search(df, query, num_books=10):
+    book_index = HelperFunctions.query_to_index(df, query)
+    semantic_indices = HelperFunctions.get_semantic_results(book_index, num_books)
     semantic_indices = semantic_indices.tolist() if isinstance(semantic_indices, np.ndarray) else semantic_indices
+    results = df.loc[semantic_indices].head(num_books)
+    return results
 
-    # Step 3: Combine Results
-    # This could be a simple union or an intersection with weighted ranking
-    combined_indices = list(set(keyword_indices + semantic_indices))
+# Function for fuzzy matching for author2 search
+def author2_search(df, query, ratio = 80, num_books=10):
+   
+    def calculate_ratio(row):
+        return fuzz.ratio(row['author'], query)
+    # Apply the function to each row and store the result in a new column
+    df['ratio'] = df.apply(calculate_ratio, axis=1)
+    # filter the database to only those rows with match > ratio
+    result = df[df["ratio"] > ratio].tolist()
+    results = result.head(num_books)
     
-    # Optional: Re-rank combined results based on some criteria, e.g., blending scores
-    # For simplicity, this example does not implement re-ranking
+    return results
 
-    # Fetch book details for the combined indices
-    combined_results = df.loc[combined_indices].head(num_books)
+def plot_semantic_search(df, query, num_books = 10):
+    # computing embeddings for the query
+    query_embedding = vo.embed(query, model="voyage-lite-02-instruct", input_type="document").embeddings
+    
+    # Convert embeddings from string representation back to lists (and then to numpy arrays)
+    embeddings_matrix = np.array([ast.literal_eval(embedding) if isinstance(embedding, str) else embedding for embedding in df['embeddings']])
+    
+    # Compute cosine similarities between the query embedding and the book embeddings
+    similarities = cosine_similarity(query_embedding, embeddings_matrix)
 
-    return combined_results
- """
+    # Get indices of the top N similar books
+    top_n_indices = np.argsort(similarities[0])[::-1][:num_books]
+    closest_books = df.iloc[top_n_indices]
+    
+    # Return the DataFrame containing the closest books
+    return closest_books
