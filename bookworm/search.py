@@ -14,7 +14,7 @@ import voyageai
 load_dotenv()
 
 # API for embeddings voyage
-api_key = os.getenv("VOYAGE_API_KEY")
+api_key = os.getenv("API_KEY")
 vo = voyageai.Client(api_key=api_key)
 
 # Load data
