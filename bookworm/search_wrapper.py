@@ -1,47 +1,112 @@
+
+""" 
+Module to orchestrate search based on user inputs. 
+
+Assembles data to search over; calls proper search function given user 
+preferred search mode; and filters results based on user filters.
+
+FUNCTIONS
+=========
+
+assemble_data(path1, path2, path3, path4)
+    Assembles data split into 4 pieces wtih same column names
+    
+filter_ratings(results, min_ave_ratings, min_num_rating)
+    Filters serach results by user ratings prefrences. 
+
+search_wrapper(search_mode, search_value, min_ave_rating, 
+                   min_num_ratings, num_books=10)
+    Searches and filters book databse based on given inputs. 
+    
+"""
+
 import search
 import pandas as pd
-import numpy as np
-from thefuzz import fuzz
 
-# adding the df
-# Read the first dataframe, which will provide the column names for the combined dataframe
-df1 = pd.read_csv("bookworm/data/complete_w_embeddings/complete_w_embeddings.csv_part_1.csv")
-
-# Read the remaining dataframes without adding their headers as column names
-df2 = pd.read_csv("bookworm/data/complete_w_embeddings/complete_w_embeddings.csv_part_2.csv", header=None)
-df3 = pd.read_csv("bookworm/data/complete_w_embeddings/complete_w_embeddings.csv_part_3.csv", header=None)
-df4 = pd.read_csv("bookworm/data/complete_w_embeddings/complete_w_embeddings.csv_part_4.csv", header=None)
-df2.columns = df1.columns
-df3.columns = df1.columns
-df4.columns = df1.columns
-
-df = pd.concat([df1, df2, df3, df4], ignore_index=True)
+def assemble_data(path1, path2, path3, path4):
+    """ 
+    Function to assemble data split into 4 pieces wtih same column names.
+    Paramaters:
+        Path_X: The file path name.  Must be a valid path and a csv file.
+                All files must have the same column headers. 
+    Returns: 
+        An assembled dataframe 
+    """
+    # Read the first dataframe, which will provide the column names
+    df1 = pd.read_csv(path1)
+    # Read the remaining dataframes without adding headers
+    df2 = pd.read_csv(path2)
+    df3 = pd.read_csv(path3)
+    df4 = pd.read_csv(path4)
+    df2.columns = df1.columns
+    df3.columns = df1.columns
+    df4.columns = df1.columns
+    df = pd.concat([df1, df2, df3, df4], ignore_index=True)
+    return df
 
 # Filter
-def filter(results, min_ave_ratings, min_num_rating):
-    # Filter by min ave ratings if min > 0.0
-    # Otherwise keep all, including "none" values 
+def filter_ratings(results, min_ave_ratings, min_num_rating):
+
+    """ 
+    Filters serach results by user ratings prefrences. 
+
+    Filter by min ave ratings if min_ave_ratigns > 0.0, otherwise 
+    keeps all, including "none" values. Likewise filters by 
+    min_num_ratings if min_num_ratings > 0. 
+    
+    Paramaters
+        Results: The search results to be filterd. Must be a df with 
+            columns "Book-Ratings" and "Rating Count".
+        min_ave_ratings:  A float. The min ave ratings to filter
+        min-num_ratings: An int.  The min number of ratings to filter on.
+    Returns: 
+        A dataframe of filtered results
+    """
     if min_ave_ratings != 0.0:
         subset_df = results[results['Book-Rating'] > min_ave_ratings]
     else:
         subset_df = results
-    
-    # Filter by min num ratings if min_num > 0
-    # Otherwise keep all, including "none" values 
     if min_num_rating != 0:
         results_filtered = subset_df[subset_df['RatingCount'] > min_num_rating]
     else:
         results_filtered = subset_df
     return results_filtered
 
-def search_wrapper(search_mode, search_value, min_ave_rating, min_num_ratings, num_books=10):
-    if (search_mode == "Author2"):
+def search_wrapper(search_mode, search_value, min_ave_rating,
+                   min_num_ratings, num_books=10):
+    """
+    Searches and filters based on given inputs. 
+
+    Assembles data to search over; calls proper search function given user 
+    preferred search mode; and filters results based on user filters.
+
+    Paramaters
+        Search_mode: A string. 
+        Search_value: A string. 
+        min_ave_ratings: A float. The min ave ratings to filter
+        min-num_ratings: An int.  The min number of ratings to filter on.
+        num_books: # of books returned from the search, pre-filtering.
+    Returns
+        A dataframe of filtered search results. 
+    """
+    # assemble data
+    path_root = "bookworm/data/complete_w_embeddings/complete_w_embeddings.csv"
+    path1 = path_root + "_part_1.csv"
+    path2 = path_root + "_part_2.csv"
+    path3 = path_root + "_part_3.csv"
+    path4 = path_root + "_part_4.csv"
+    df = assemble_data(path1, path2, path3, path4)
+
+    # search
+    if search_mode == "Author2":
         results = search.author2_search(df, search_value, num_books)
-    if (search_mode == "Title"):
+    elif search_mode == "Title":
         results = search.semantic_search(df, search_value, num_books)
-    if (search_mode == "Plot"):
+    elif search_mode == "Plot":
         results = search.plot_semantic_search(df, search_value, num_books)
-    else: 
+    else:
         results = search.keyword_search(df, search_value, num_books)
-    results_filtered = filter(results, min_ave_rating, min_num_ratings)
+
+    #filter
+    results_filtered = filter_ratings(results, min_ave_rating, min_num_ratings)
     return results_filtered
