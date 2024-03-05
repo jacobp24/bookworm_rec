@@ -91,16 +91,15 @@ def semantic_search(df, query, num_books=10):
     return results
 
 # Function for fuzzy matching for author2 search
-def author2_search(df, query, ratio = 80, num_books=10):
+def author2_search(df, query, ratio=80, num_books=10):
    
     def calculate_ratio(row):
         return fuzz.ratio(row['author'], query)
     # Apply the function to each row and store the result in a new column
     df['ratio'] = df.apply(calculate_ratio, axis=1)
     # filter the database to only those rows with match > ratio
-    result = df[df["ratio"] > ratio].tolist()
+    result = df[df["ratio"] > 80]
     results = result.head(num_books)
-    
     return results
 
 def plot_semantic_search(df, query, num_books = 10):
