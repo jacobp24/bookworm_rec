@@ -49,6 +49,11 @@ test_assemble_data_correct_shape(self):
 
 test_assemble_data_smoke_test(self):
     Test to ensure the assembled data is a datframe
+
+Tests in Class TestSearchWrapper
+===============================
+def test_wrapper_calls_filter(self, mock_select_search):
+    Smoke test for search_wrapper
         
 
 
@@ -226,6 +231,27 @@ class TestAssembleData(unittest.TestCase):
         d4 = pd.read_csv(p4)
         expected_rows = d1.shape[0] + d2.shape[0] + d3.shape[0] + d4.shape[0]
         self.assertEqual(results.shape[0], expected_rows)
+
+class TestSearchWrapper(unittest.TestCase):
+    """
+    Test cases for the search_wrapper function
+    """
+    @mock.patch("bookworm.search_wrapper.select_search")
+    def test_wrapper_calls_filter(self, mock_select_search):
+        """
+        Smoke test for search_wrapper
+        """
+        f = "bookworm/data/test_data.csv"
+        test_dat = pd.read_csv(f)
+        # Assume the search function returns the original data
+        mock_select_search.return_value = test_dat
+        # call search wrapper
+        results = search_wrapper.search_wrapper("Title", "Goofy", 6, 0)
+        # results should be the original test_dat (no filters)
+        # call filter function on test and min-ratings, 6
+        # expected result is 2 entries
+        self.assertEqual(results.shape[0], 2)
+
 
 if __name__ == '__main__':
     unittest.main()
