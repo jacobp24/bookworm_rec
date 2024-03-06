@@ -27,6 +27,12 @@ class HelperFunctions:
         except (ValueError, SyntaxError):
             genres_text = 'Unknown Genre'
         return genres_text
+    
+    def fill_na(df):
+        df.fillna({'author': 'Unknown', 'book_title': 'Unknown', 
+                   'genre': 'Unknown', 'summary': 'No Summary Available'},
+                     inplace=True)
+        return df
 
     @staticmethod
     def preprocess_text(text):
@@ -40,9 +46,7 @@ class HelperFunctions:
 
     @staticmethod
     def query_to_index(df, query, vectorizer=None):
-        df.fillna({'author': 'Unknown', 'book_title': 'Unknown', 
-                   'genre': 'Unknown', 'summary': 'No Summary Available'},
-                     inplace=True)
+        df = HelperFunctions.fill_na(df)
         df['combined_text'] = df.apply(lambda x: HelperFunctions.preprocess_text(f"{x['book_title']} {x['author']} {HelperFunctions.parse_genres(x['genre'])} {x['summary']}"), axis=1)
 
         if vectorizer is None:
@@ -54,7 +58,7 @@ class HelperFunctions:
         return most_relevant_index
 
 def keyword_search(df, query, num_books=10):
-    df.fillna({'author': 'Unknown', 'book_title': 'Unknown', 'genre': 'Unknown', 'summary': 'No Summary Available'}, inplace=True)
+    df = HelperFunctions.fill_na(df)
     df['combined_text'] = df.apply(lambda x: HelperFunctions.preprocess_text(f"{x['book_title']} {x['author']} {HelperFunctions.parse_genres(x['genre'])} {x['summary']}"), axis=1)
     query = HelperFunctions.preprocess_text(query)
     vectorizer = TfidfVectorizer(stop_words='english')
@@ -70,13 +74,14 @@ def keyword_search(df, query, num_books=10):
 
 def semantic_search(df, query, num_books=10):
     book_index = HelperFunctions.query_to_index(df, query)
-    semantic_indices = HelperFunctions.get_semantic_results(book_index, num_books)
+    semantic_indices = HelperFunctions.get_semantic_results(book_index, 
+                                                            num_books)
     semantic_indices = semantic_indices.tolist() if isinstance(semantic_indices, np.ndarray) else semantic_indices
     results = df.loc[semantic_indices].head(num_books)
     return results
 
 # Function for fuzzy matching for author2 search
-def author2_search(df, query, ratio=80, num_books=10):
+def author2_search(df, query, num_books=10):
 
     def calculate_ratio(row):
         return fuzz.ratio(row['author'], query)
