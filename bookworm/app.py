@@ -23,10 +23,10 @@ def local_css(file_name):
     with open(file_name) as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-try:
-    local_css("styles.css")  # Load custom CSS
-except: 
-    local_css("bookworm/styles.css")
+# try:
+#     local_css("styles.css")  # Load custom CSS
+# except: 
+#     local_css("bookworm/styles.css")
 
 # DEFINE GLOBAL CONSTANTS
 SM_DICT = {
