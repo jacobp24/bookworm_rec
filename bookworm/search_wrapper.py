@@ -24,10 +24,9 @@ search_wrapper(search_mode, search_value, min_ave_rating,
     
 """
 
-try:
+try: 
     import search
-# pylint: disable=W0702
-except:
+except ImportError:
     # pylint: disable=consider-using-from-import
     import bookworm.search as search
 import pandas as pd
@@ -103,13 +102,17 @@ def select_search(df, search_mode, search_value, num_books=10):
     """
 
     if search_mode == "Author2":
-        results = search.author2_search(df, search_value, num_books=num_books)
+        results = search.author2_search(df, search_value, 
+                                        num_books=max(num_books*2, 20))
     elif search_mode == "Title":
-        results = search.semantic_search(df, search_value, num_books=num_books)
+        results = search.semantic_search(df, search_value, 
+                                         num_books=max(num_books*2, 20))
     elif search_mode == "Plot":
-        results = search.plot_semantic_search(df, search_value, num_books=num_books)
+        results = search.plot_semantic_search(df, search_value, 
+                                              num_books=max(num_books*2, 20))
     else:
-        results = search.keyword_search(df, search_value, num_books=num_books)
+        results = search.keyword_search(df, search_value,
+                                        num_books=max(num_books*2, 20))
 
     return results
 
@@ -153,4 +156,4 @@ def search_wrapper(search_mode, search_value, min_ave_rating,
 
     #filter
     results_filtered = filter_ratings(results, min_ave_rating, min_num_ratings)
-    return results_filtered
+    return results_filtered.head(num_books)
