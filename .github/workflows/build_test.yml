@@ -17,6 +17,8 @@ on:
     # from Coveralls with your coverage.
     branches:
       - main
+  # enable tests to be manually triggered
+  workflow_dispatch:
 
 # A list of jobs to run as part of the workflow
 jobs:
