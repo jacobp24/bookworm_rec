@@ -50,11 +50,9 @@ import unittest
 from unittest.mock import patch
 import pandas as pd
 import numpy as np
-try: 
-    from search import HelperFunctions
-except: 
-    # pylint: disable=import-error
-    from bookworm.search import HelperFunctions
+import os
+from search import HelperFunctions
+
 
 class TestHelperFunctions(unittest.TestCase):
     """
@@ -65,8 +63,14 @@ class TestHelperFunctions(unittest.TestCase):
         """ 
         Creates and loads teating data. 
         """
-        f = "bookworm/data/test_data.csv"
-        self.test_dat = pd.read_csv(f)
+        try: 
+            f = "data/test_data.csv"
+            self.test_dat = pd.read_csv(f)
+        except: 
+            f = "bookworm/data/test_data.csv"
+            self.test_dat = pd.read_csv(f)
+            
+
         self.test_dat_filled = HelperFunctions.fill_na(self.test_dat)
 
         unfilled_data = {'author': ['Author1', None, 'Author3'],
@@ -142,7 +146,7 @@ class TestHelperFunctions(unittest.TestCase):
         index = HelperFunctions.query_to_index(self.test_dat, query)
         self.assertIsInstance(index, np.int64)
 
-    @patch("bookworm.search.HelperFunctions.fill_na")
+    @patch("search.HelperFunctions.fill_na")
     def test_query_to_index_calls_fill_na(self, mock_fill_na):
         """ 
         Confirm query_to_index correctly calls fill_na.
@@ -150,6 +154,7 @@ class TestHelperFunctions(unittest.TestCase):
         mock_fill_na.return_value = self.test_dat_filled
         HelperFunctions.query_to_index(self.test_dat, "dog")
         mock_fill_na.assert_called_once_with(self.test_dat)
+    
 
     def test_query_exact(self):
         """
