@@ -30,13 +30,20 @@ from unittest.mock import patch
 
 import pandas as pd
 try: 
-    from app import main, display_avg_ratings_slider, display_num_ratings_slider, \
-                display_search_mode_ui, display_search_value_ui, \
-                display_genre_dropdown, display_search_button, execute_query
+    from app import (main, display_avg_ratings_slider, 
+                     display_num_ratings_slider, 
+                     display_search_mode_UI, display_search_value_UI, 
+                     display_genre_dropdown, 
+                     display_search_button, 
+                     execute_query)
 except: 
-    from bookworm.app import main, display_avg_ratings_slider, display_num_ratings_slider, \
-                display_search_mode_ui, display_search_value_ui, \
-                display_genre_dropdown, display_search_button, execute_query
+    from bookworm.app import (main, display_avg_ratings_slider, 
+                              display_num_ratings_slider, 
+                              display_search_mode_UI, 
+                              display_search_value_UI, 
+                              display_genre_dropdown, 
+                              display_search_button, 
+                              execute_query)
 
 
 class TestStreamlitUI(unittest.TestCase):
@@ -76,14 +83,14 @@ class TestStreamlitUI(unittest.TestCase):
         """Test display_search_mode_ui function."""
         with patch('streamlit.selectbox') as mock_selectbox:
             mock_selectbox.return_value = "Books similar to my favorite book"
-            result = display_search_mode_ui()
+            result = display_search_mode_UI()
             self.assertEqual(result, "Title")
 
     def test_display_search_value_ui(self):
         """Test display_search_value_ui function."""
         with patch('streamlit.text_input') as mock_text_input:
             mock_text_input.return_value = "The Great Gatsby"
-            result = display_search_value_ui("Title")
+            result = display_search_value_UI("Title")
             self.assertEqual(result, "The Great Gatsby")
 
     def test_display_genre_dropdown(self):

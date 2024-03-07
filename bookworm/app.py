@@ -2,7 +2,10 @@ import streamlit as st
 import numpy as np 
 import pandas as pd 
 import base64
-from search_wrapper import search_wrapper as search_wrapper
+try:
+    from search_wrapper import search_wrapper as search_wrapper
+except: 
+    from bookworm.search_wrapper import search_wrapper as search_wrapper
 
 # Import Material components for styling
 import streamlit.components.v1 as components
