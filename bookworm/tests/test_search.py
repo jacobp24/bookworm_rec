@@ -50,8 +50,11 @@ import unittest
 from unittest.mock import patch
 import pandas as pd
 import numpy as np
-# pylint: disable=import-error
-from bookworm.search import HelperFunctions
+try: 
+    from search import HelperFunctions
+except: 
+    # pylint: disable=import-error
+    from bookworm.search import HelperFunctions
 
 class TestHelperFunctions(unittest.TestCase):
     """
