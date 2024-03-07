@@ -71,7 +71,7 @@ Run this module to execute the unit tests for the search_wrapper modules.
 import unittest
 from unittest import mock
 import pandas as pd
-import search_wrapper as search_wrapper
+import search_wrapper
 
 class TestFilter(unittest.TestCase):
     """Test cases for the filter_ratings function"""

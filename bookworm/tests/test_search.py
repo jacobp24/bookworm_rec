@@ -50,7 +50,6 @@ import unittest
 from unittest.mock import patch
 import pandas as pd
 import numpy as np
-import os
 from search import HelperFunctions
 
 
@@ -63,13 +62,14 @@ class TestHelperFunctions(unittest.TestCase):
         """ 
         Creates and loads teating data. 
         """
-        try: 
+        try:
             f = "data/test_data.csv"
             self.test_dat = pd.read_csv(f)
-        except: 
+        # pylint: disable=bare-except
+        except:
             f = "bookworm/data/test_data.csv"
             self.test_dat = pd.read_csv(f)
-            
+
 
         self.test_dat_filled = HelperFunctions.fill_na(self.test_dat)
 
@@ -154,7 +154,7 @@ class TestHelperFunctions(unittest.TestCase):
         mock_fill_na.return_value = self.test_dat_filled
         HelperFunctions.query_to_index(self.test_dat, "dog")
         mock_fill_na.assert_called_once_with(self.test_dat)
-    
+
 
     def test_query_exact(self):
         """

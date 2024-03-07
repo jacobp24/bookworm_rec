@@ -132,14 +132,15 @@ def search_wrapper(search_mode, search_value, min_ave_rating,
         A dataframe of filtered search results. 
     """
     # assemble data
-    try: 
+    # pylint: disable=bare-except
+    try:
         path_root = "bookworm/data/complete_w_embeddings/complete_w_embeddings.csv"
         path1 = path_root + "_part_1.csv"
         path2 = path_root + "_part_2.csv"
         path3 = path_root + "_part_3.csv"
         path4 = path_root + "_part_4.csv"
         df = assemble_data(path1, path2, path3, path4)
-    except: 
+    except:
         path_root = "data/complete_w_embeddings/complete_w_embeddings.csv"
         path1 = path_root + "_part_1.csv"
         path2 = path_root + "_part_2.csv"
