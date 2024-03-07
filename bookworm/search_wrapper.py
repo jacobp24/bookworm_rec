@@ -14,13 +14,22 @@ assemble_data(path1, path2, path3, path4)
 filter_ratings(results, min_ave_ratings, min_num_rating)
     Filters serach results by user ratings prefrences. 
 
+select_search(df, search_mode, search_value, min_ave_rating, 
+                  min_num_ratings, num_book=10)
+    Selects and implements search based on user search mode.
+
 search_wrapper(search_mode, search_value, min_ave_rating, 
                    min_num_ratings, num_books=10)
     Searches and filters book databse based on given inputs. 
     
 """
 
-import search
+try:
+    import search
+# pylint: disable=W0702
+except:
+    # pylint: disable=consider-using-from-import
+    import bookworm.search as search
 import pandas as pd
 
 def assemble_data(path1, path2, path3, path4):
@@ -28,10 +37,11 @@ def assemble_data(path1, path2, path3, path4):
     Function to assemble data split into 4 pieces wtih same column names.
     Paramaters:
         Path_X: The file path name.  Must be a valid path and a csv file.
-                All files must have the same column headers. 
+                Assumes only the first path has column headers.
     Returns: 
-        An assembled dataframe 
+        An assembled dataframe.
     """
+
     # Read the first dataframe, which will provide the column names
     df1 = pd.read_csv(path1)
     # Read the remaining dataframes without adding headers
@@ -48,7 +58,7 @@ def assemble_data(path1, path2, path3, path4):
 def filter_ratings(results, min_ave_ratings, min_num_rating):
 
     """ 
-    Filters serach results by user ratings prefrences. 
+    Filters search results by user ratings prefrences. 
 
     Filter by min ave ratings if min_ave_ratigns > 0.0, otherwise 
     keeps all, including "none" values. Likewise filters by 
@@ -62,6 +72,12 @@ def filter_ratings(results, min_ave_ratings, min_num_rating):
     Returns: 
         A dataframe of filtered results
     """
+
+    if not "Book-Rating" in results.columns:
+        raise ValueError("Your data must have a Book-Ratings column")
+    if not "RatingCount" in results.columns:
+        raise ValueError("Your data must have a RatingCount column")
+
     if min_ave_ratings != 0.0:
         subset_df = results[results['Book-Rating'] > min_ave_ratings]
     else:
@@ -71,6 +87,32 @@ def filter_ratings(results, min_ave_ratings, min_num_rating):
     else:
         results_filtered = subset_df
     return results_filtered
+
+def select_search(df, search_mode, search_value, num_books=10):
+    """
+     Selects and implements search based on user search mode.
+
+    Paramaters
+        Search_mode: A string. 
+        Search_value: A string. 
+        min_ave_ratings: A float. The min ave ratings to filter
+        min-num_ratings: An int.  The min number of ratings to filter on.
+        num_books: # of books returned from the search, pre-filtering.
+    Returns
+        A dataframe of filtered search results. 
+    """
+
+    if search_mode == "Author2":
+        results = search.author2_search(df, search_value, num_books=num_books)
+    elif search_mode == "Title":
+        results = search.semantic_search(df, search_value, num_books=num_books)
+    elif search_mode == "Plot":
+        results = search.plot_semantic_search(df, search_value, num_books=num_books)
+    else:
+        results = search.keyword_search(df, search_value, num_books=num_books)
+
+    return results
+
 
 def search_wrapper(search_mode, search_value, min_ave_rating,
                    min_num_ratings, num_books=10):
@@ -98,14 +140,7 @@ def search_wrapper(search_mode, search_value, min_ave_rating,
     df = assemble_data(path1, path2, path3, path4)
 
     # search
-    if search_mode == "Author2":
-        results = search.author2_search(df, search_value, num_books)
-    elif search_mode == "Title":
-        results = search.semantic_search(df, search_value, num_books)
-    elif search_mode == "Plot":
-        results = search.plot_semantic_search(df, search_value, num_books)
-    else:
-        results = search.keyword_search(df, search_value, num_books)
+    results = select_search(df, search_mode, search_value, num_books)
 
     #filter
     results_filtered = filter_ratings(results, min_ave_rating, min_num_ratings)
