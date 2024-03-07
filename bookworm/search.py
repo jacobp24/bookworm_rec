@@ -51,8 +51,14 @@ api_key = "pa-_TFyoLW1iXGM-x7DAS3yNY27k1Uwrp8r_XRG7ofkajY"
 vo = voyageai.Client(api_key=api_key)
 
 # load preprocessed distances/indices
-distances = np.load('bookworm/data/distances_updated.npy')
-indices = np.load('bookworm/data/indices_updated.npy')
+try: 
+    distances = np.load('bookworm/data/distances_updated.npy')
+except: 
+    distances = np.load('data/distances_updated.npy')
+try:
+    indices = np.load('bookworm/data/indices_updated.npy')
+except: 
+    indices = np.load('data/indices_updated.npy')
 
 class HelperFunctions:
 
