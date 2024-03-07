@@ -65,8 +65,7 @@ class TestHelperFunctions(unittest.TestCase):
         try:
             f = "data/test_data.csv"
             self.test_dat = pd.read_csv(f)
-        # pylint: disable=bare-except
-        except:
+        except ImportError:
             f = "bookworm/data/test_data.csv"
             self.test_dat = pd.read_csv(f)
 
