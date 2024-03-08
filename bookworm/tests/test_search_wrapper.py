@@ -71,9 +71,7 @@ Run this module to execute the unit tests for the search_wrapper modules.
 import unittest
 from unittest import mock
 import pandas as pd
-# pylint: disable=consider-using-from-import
-# pylint: disable=import-error
-import bookworm.search_wrapper as search_wrapper
+import search_wrapper
 
 class TestFilter(unittest.TestCase):
     """Test cases for the filter_ratings function"""
@@ -85,7 +83,7 @@ class TestFilter(unittest.TestCase):
         Using test data as input and setting average ratings filter to
         6 should result in 2 entries remaining after filtering. 
         """
-        f = "bookworm/data/test_data.csv"
+        f = "data/test_data.csv"
         test_dat = pd.read_csv(f)
         results = search_wrapper.filter_ratings(test_dat, 6, 0)
         self.assertEqual(results.shape[0], 2)
@@ -94,10 +92,10 @@ class TestFilter(unittest.TestCase):
         """ 
         Confirm filter_ratings() properly filters by number ratings.
          
-        Using test data as input and setting number of ratings filter 
+        Using test dat as input and setting number of ratings filter 
         to 6 should result in 1 entry remaining after filtering. 
         """
-        f = "bookworm/data/test_data.csv"
+        f = "data/test_data.csv"
         test_dat = pd.read_csv(f)
         results = search_wrapper.filter_ratings(test_dat, 0, 6)
         self.assertEqual(results.shape[0], 1)
@@ -110,7 +108,7 @@ class TestFilter(unittest.TestCase):
         filter to zero should return data in same shape as original
         data.
         """
-        f = "bookworm/data/test_data.csv"
+        f = "data/test_data.csv"
         test_dat = pd.read_csv(f)
         results = search_wrapper.filter_ratings(test_dat, 0, 0)
         self.assertEqual(results.shape[0], test_dat.shape[0])
@@ -138,60 +136,60 @@ class TestFilter(unittest.TestCase):
 class TestSelectSearch(unittest.TestCase):
     """Test cases for the filter_ratings function"""
 
-    @mock.patch("bookworm.search.author2_search")
+    @mock.patch("search.author2_search")
     def test_select_search_author2(self, mock_author2_search):
         """
         Confirm correct search function called for search_mode Author2
         """
-        f = "bookworm/data/test_data.csv"
+        f = "data/test_data.csv"
         test_dat = pd.read_csv(f)
         mock_author2_search.return_value = "Author2 search performed"
         results = search_wrapper.select_search(test_dat, "Author2",
                                                "J. R. Tolkien")
         self.assertEqual(results, "Author2 search performed")
 
-    @mock.patch("bookworm.search.semantic_search")
+    @mock.patch("search.semantic_search")
     def test_select_search_title(self, mock_semantic_search):
         """
         Confirm correct search function called for search_mode Title
         """
-        f = "bookworm/data/test_data.csv"
+        f = "data/test_data.csv"
         test_dat = pd.read_csv(f)
         mock_semantic_search.return_value = "Semantic search performed"
         results = search_wrapper.select_search(test_dat, "Title",
                                                "J. R. Tolkien")
         self.assertEqual(results, "Semantic search performed")
 
-    @mock.patch("bookworm.search.plot_semantic_search")
+    @mock.patch("search.plot_semantic_search")
     def test_select_search_plot(self, mock_plot_semantic_search):
         """
         Confirm correct search function called for search_mode Plot
         """
-        f = "bookworm/data/test_data.csv"
+        f = "data/test_data.csv"
         test_dat = pd.read_csv(f)
         mock_plot_semantic_search.return_value = "Plot search performed"
         results = search_wrapper.select_search(test_dat, "Plot",
                                                "J. R. Tolkien")
         self.assertEqual(results, "Plot search performed")
 
-    @mock.patch("bookworm.search.keyword_search")
+    @mock.patch("search.keyword_search")
     def test_select_search_author1(self, mock_keyword_search):
         """
         Confirm correct search function called for search_mode Author1
         """
-        f = "bookworm/data/test_data.csv"
+        f = "data/test_data.csv"
         test_dat = pd.read_csv(f)
         mock_keyword_search.return_value = "Keyword search performed"
         results = search_wrapper.select_search(test_dat, "Author1",
                                                "J. R. Tolkien")
         self.assertEqual(results, "Keyword search performed")
 
-    @mock.patch("bookworm.search.keyword_search")
+    @mock.patch("search.keyword_search")
     def test_select_search_genre(self, mock_keyword_search):
         """
         Confirm correct search function called for search_mode genre
         """
-        f = "bookworm/data/test_data.csv"
+        f = "data/test_data.csv"
         test_dat = pd.read_csv(f)
         mock_keyword_search.return_value = "Keyword search performed"
         results = search_wrapper.select_search(test_dat, "Genre",
@@ -205,10 +203,10 @@ class TestAssembleData(unittest.TestCase):
         """
         Helper function; creates mock paths for assemble_function tests
         """
-        path1 = "bookworm/data/test_data.csv"
-        path2 = "bookworm/data/test_data2.csv"
-        path3 = "bookworm/data/test_data3.csv"
-        path4 = "bookworm/data/test_data3.csv"
+        path1 = "data/test_data.csv"
+        path2 = "data/test_data2.csv"
+        path3 = "data/test_data3.csv"
+        path4 = "data/test_data3.csv"
         return (path1, path2, path3, path4)
 
     def test_assemble_data_smoke_test(self):
@@ -236,12 +234,12 @@ class TestSearchWrapper(unittest.TestCase):
     """
     Test cases for the search_wrapper function
     """
-    @mock.patch("bookworm.search_wrapper.select_search")
+    @mock.patch("search_wrapper.select_search")
     def test_wrapper_calls_filter(self, mock_select_search):
         """
         Smoke test for search_wrapper
         """
-        f = "bookworm/data/test_data.csv"
+        f = "data/test_data.csv"
         test_dat = pd.read_csv(f)
         # Assume the search function returns the original data
         mock_select_search.return_value = test_dat

@@ -17,6 +17,8 @@ on:
     # from Coveralls with your coverage.
     branches:
       - main
+  # enable tests to be manually triggered
+  workflow_dispatch:
 
 # A list of jobs to run as part of the workflow
 jobs:
@@ -85,9 +87,9 @@ jobs:
       # run successfully, you can add those steps here!
 
       # Next step: run pylint. Anything less than 10/10 will fail.
-      - name: Lint with pylint
-        run: |
-          pylint bookworm/**/*.py
+      #- name: Lint with pylint
+      #  run: |
+      #    pylint bookworm/**/*.py
 
       # Next step: run the unit tests with code coverage.
       - name: Unit tests

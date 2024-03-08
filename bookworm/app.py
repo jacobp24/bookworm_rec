@@ -2,7 +2,10 @@ import streamlit as st
 import numpy as np 
 import pandas as pd 
 import base64
-from search_wrapper import search_wrapper as search_wrapper
+try:
+    from search_wrapper import search_wrapper as search_wrapper
+except: 
+    from bookworm.search_wrapper import search_wrapper as search_wrapper
 
 # Import Material components for styling
 import streamlit.components.v1 as components
@@ -20,7 +23,9 @@ def local_css(file_name):
     with open(file_name) as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
+
 local_css("styles.css")  # Load custom CSS
+
 
 # DEFINE GLOBAL CONSTANTS
 SM_DICT = {
@@ -81,10 +86,16 @@ def execute_query(search_mode, search_value, min_ave_rating, min_num_ratings):
 
 def main():
     # Display header banner with stock image of books
-    st.image("books_banner.png", use_column_width=True)
+    try: 
+        st.image("books_banner.png", use_column_width=True)
+    except: 
+        st.image("bookworm/books_banner.png", use_column_width=True)
 
+    try: 
+        TITLE_IMAGE = "butterfly.png"
+    except: 
+        TITLE_IMAGE = "bookworm/butterfly.png"
 
-    TITLE_IMAGE = "butterfly.png"
 
     st.markdown(
         f"""
