@@ -49,6 +49,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Get API Key
+        run: echo "API KEY is $API_KEY"
         env:
            API_KEY: ${{ secrets.API_KEY }}
 
