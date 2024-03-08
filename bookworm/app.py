@@ -1,15 +1,13 @@
-import streamlit as st
-import numpy as np 
-import pandas as pd 
 import base64
+import streamlit as st
+import streamlit.components.v1 as components
 
-try: 
+
+try:
     from search_wrapper import search_wrapper
-except ImportError: 
+except ImportError:
     from bookworm.search_wrapper import search_wrapper
 
-# Import Material components for styling
-import streamlit.components.v1 as components
 
 # Set page configuration
 st.set_page_config(
@@ -37,21 +35,27 @@ SM_DICT = {
     "Author2": "Most popular books by my favorite author"
 }
 
-SEARCH_MODES = [SM_DICT["Title"], SM_DICT["Author1"], SM_DICT["Plot"], SM_DICT["Genre"], SM_DICT["Author2"]]
-GENRES = ["Science", "Mystery", "Other"] 
+SEARCH_MODES = [SM_DICT["Title"], SM_DICT["Author1"], SM_DICT["Plot"],
+                SM_DICT["Genre"], SM_DICT["Author2"]]
+GENRES = ["Science", "Mystery", "Other"]
 
-# DEFINE EACH UI ELEMENT AS A SEPARATE FUNCTION 
+# DEFINE EACH UI ELEMENT AS A SEPARATE FUNCTION
 def display_avg_ratings_slider():
-    return st.slider("Exclude Books with Average Ratings Lower than:", min_value=0.0, max_value=10.0, \
-                     value=0.0, step=0.5, key="Ave. Ratings Slider", help="Set the minimum average rating.")
+    return st.slider("Exclude Books with Average Ratings Lower than:",
+                     min_value=0.0, max_value=10.0,
+                     value=0.0, step=0.5, key="Ave. Ratings Slider",
+                     help="Set the minimum average rating.")
 
 def display_num_ratings_slider():
-    return st.slider("Exclude Books that have been rated by fewer than:", min_value=0, max_value=50, \
-                    value=0, step=1, key="Num. Ratings Slider", help="Set the minimum number of ratings.")
-    
+    return st.slider("Exclude Books that have been rated by fewer than:",
+                     min_value=0, max_value=50,
+                    value=0, step=1, key="Num. Ratings Slider",
+                    help="Set the minimum number of ratings.")
+
 def display_search_mode_ui():
-    help_text_string = "Choose how you want to prioritize your search." 
-    selection = st.selectbox("Search Mode", [None] + SEARCH_MODES, help=help_text_string, key="search_mode")
+    help_text_string = "Choose how you want to prioritize your search."
+    selection = st.selectbox("Search Mode", [None] + SEARCH_MODES,
+                             help=help_text_string, key="search_mode")
 
     search_mode = ""
     for key, value in SM_DICT.items():
@@ -61,29 +65,34 @@ def display_search_mode_ui():
 
     return search_mode
 
-def display_search_value_ui(search_mode): 
-    if search_mode == "Genre": 
+def display_search_value_ui(search_mode):
+    if search_mode == "Genre":
         return display_genre_dropdown()
     else:
         display_str = search_mode
         if display_str in ["Author1", "Author2"]:
             display_str = display_str[:-1]
-        return st.text_input(f"Input your favorite {display_str}", key="search_val")
-   
+        return st.text_input(f"Input your favorite {display_str}",
+                             key="search_val")
+
 def display_genre_dropdown():
-    help_text_string = "Select your favorite genre." 
-    genre_pick = st.selectbox("Favorite Genre", [None] + GENRES, help=help_text_string)
+    help_text_string = "Select your favorite genre."
+    genre_pick = st.selectbox("Favorite Genre", [None] + GENRES,
+                              help=help_text_string)
     if genre_pick == "Other":
         return st.text_input("Describe your favorite genre", key="other_genre")
-    else: 
+    else:
         return genre_pick
 
 def display_search_button():
-    return st.button("Search Now", key="search_now", help="Click to initiate search.", type="primary", \
+    return st.button("Search Now", key="search_now",
+                     help="Click to initiate search.", type="primary",
                      disabled=False, use_container_width=False)
-    
+
 def execute_query(search_mode, search_value, min_ave_rating, min_num_ratings):
-    st.write(f"Searching for books using {search_mode}, value: {search_value}, min average rating: {min_ave_rating}, min number of ratings: {min_num_ratings}") 
+    st.write(f"Searching for books using {search_mode}, value: {search_value}, "
+             f"min average rating: {min_ave_rating}, "
+             f"min number of ratings: {min_num_ratings}") 
 
 def main():
     # Display header banner with stock image of books
@@ -103,11 +112,14 @@ def main():
         unsafe_allow_html=True
     )
 
-    
+
     # Add introductory text
-    st.write("Welcome to The Bookish Butterfly! An literary guide designed for bookworms, aiding in the exploration of new books with tailored preferences. "
-             "Simply choose how you want to prioritize your search, input your favorite book, author, plot, or genre. "
-             "Adjust the search filters as desired, and click 'Search Now' to find your next literary adventure.")
+    st.write("Welcome to The Bookish Butterfly! An literary guide designed for"
+              "bookworms, aiding in the exploration of new books with tailored"
+              "preferences. Simply choose how you want to prioritize your" 
+              "search, input your favorite book, author, plot, or genre. "
+              "Adjust the search filters as desired, and click 'Search Now'" 
+              "to find your next literary adventure.")
 
     # Display search mode, value, and button
     search_mode = display_search_mode_ui()
