@@ -48,10 +48,10 @@ jobs:
     # The actual workflow steps!
     steps:
       - name: Get API Key
-      env:
-        GITHUB_TOKEN: ${{ secrets.API_KEY }}
-        FIRST_NAME: Jacob
-        LAST_NAME: Peterson
+        env:
+          GITHUB_TOKEN: ${{ secrets.API_KEY }}
+          FIRST_NAME: Jacob
+          LAST_NAME: Peterson
       # First, check out the repository for the current branch.
       - uses: actions/checkout@v3
 
