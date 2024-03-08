@@ -216,26 +216,45 @@ class TestSearch(unittest.TestCase):
             expected = query
             self.assertEqual(results, expected)
 
-    def test_keyword_close(self):
+
+    def test_author2_search_exact(self):
+        """ 
+        Confirm author2_search returs books by that author only; exact match.
+
+        Pattern test. In any case where the query string is an exact 
+        match to the author field in dataset, ALL books returned should
+        be by that author.  
+ 
         """
-        Confirms that close match queries return expected match.
+
+        for idx in range(2):
+            query = self.test_dat["author"][idx]
+            books = search.author2_search(self.test_dat, query, num_books=10)
+            for idx2 in range(books.shape[0]):
+                results = books.iloc[idx2]["author"]
+                expected = query
+                self.assertEqual(results, expected)
+
+    def test_author2_search_close(self):
+        """
+        Confirm author2_search returs books by that author only; close match.
         
-        One shot test. Search for author "Tolkien" to see if first
+        One shot test. Search for author "JR Tolkien" to see if first
         book return is by "J.R.R. Tolkien" as listed in test data. 
         """
-        query = "Tolkien"
-        books = search.keyword_search(self.test_dat, query, num_books=10)
+        query = "JRR Tolkien"
+        books = search.author2_search(self.test_dat, query, num_books=10)
         results = books.iloc[0]["author"]
         expected = "J. R. R. Tolkien"
         self.assertEqual(results, expected)
 
     def test_plot_semantic(self):
         """
-        Test plot semantic search against expected result.
+        Test plot_semantic_search against expected result.
         
-        Using test data and a query that briefly describes the test
-        book_id 18560, "Leaf by Niggle", ensure this book is returned 
-        as the top result."
+        One shot test. Using test data and a query that briefly 
+        describes the testbook_id 18560, "Leaf by Niggle", ensure 
+        this book is returned as the top result."
 
         """
         query = " A man named Niggle paints a tree."
@@ -243,6 +262,15 @@ class TestSearch(unittest.TestCase):
         results = books.iloc[0]["book_id"]
         expected = self.test_dat.iloc[7]["book_id"] # 7 = idx for Leaf by Niggle
         self.assertEqual(results, expected)
+
+    def test_semantic(self):
+        """ 
+        Test semantic_search against expected result.
+        
+        Using test data and a query that briefly describes the test
+        book_id 18560, "Leaf by Niggle", ensure this book is returned 
+        as the top result."
+        """
 
 if __name__ == '__main__':
     unittest.main()

@@ -268,7 +268,7 @@ def author2_search(df, query, num_books=10):
     # Apply the function to each row and store the result in a new column
     df['ratio'] = df.apply(calculate_ratio, axis=1)
     # filter the database to only those rows with match > ratio
-    result = df[df["ratio"] > 80]
+    result = df[df["ratio"] > 75]
     results_sorted = result.sort_values(by='Book-Rating', ascending=False)
     results = results_sorted.head(num_books)
     return results
