@@ -110,8 +110,8 @@ def main():
              "Adjust the search filters as desired, and click 'Search Now' to find your next literary adventure.")
 
     # Display search mode, value, and button
-    search_mode = display_search_mode_UI()
-    search_val = display_search_value_UI(search_mode)
+    search_mode = display_search_mode_ui()
+    search_val = display_search_value_ui(search_mode)
     
     # Display filters
     st.write("Adjust search filters as desired:")
