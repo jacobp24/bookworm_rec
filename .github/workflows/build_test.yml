@@ -49,8 +49,7 @@ jobs:
     steps:
       - name: Get API Key
         run: echo "API Key is ${{ secrets.API_KEY }}"
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           token: ${{ secrets.API_KEY }}
 
