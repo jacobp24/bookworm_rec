@@ -81,10 +81,10 @@ def execute_query(search_mode, search_value, min_ave_rating, min_num_ratings):
 
 def main():
     # Display header banner with stock image of books
-    st.image("books_banner.png", use_column_width=True)
+    st.image("images/books_banner.png", use_column_width=True)
 
 
-    TITLE_IMAGE = "butterfly.png"
+    title_image = "images/butterfly.png"
 
     st.markdown(
         f"""
