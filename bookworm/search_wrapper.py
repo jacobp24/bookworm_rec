@@ -24,7 +24,7 @@ search_wrapper(search_mode, search_value, min_ave_rating,
     
 """
 
-try: 
+try:
     import search
 except ImportError:
     # pylint: disable=consider-using-from-import
@@ -102,13 +102,13 @@ def select_search(df, search_mode, search_value, num_books=10):
     """
 
     if search_mode == "Author2":
-        results = search.author2_search(df, search_value, 
+        results = search.author2_search(df, search_value,
                                         num_books=max(num_books*2, 20))
     elif search_mode == "Title":
-        results = search.semantic_search(df, search_value, 
+        results = search.semantic_search(df, search_value,
                                          num_books=max(num_books*2, 20))
     elif search_mode == "Plot":
-        results = search.plot_semantic_search(df, search_value, 
+        results = search.plot_semantic_search(df, search_value,
                                               num_books=max(num_books*2, 20))
     else:
         results = search.keyword_search(df, search_value,

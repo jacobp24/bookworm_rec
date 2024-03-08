@@ -22,14 +22,23 @@ get_semantic_results
     Extracts the indices of the closest books to given book_index.
 
 query_to_index
+    Maps query to the closest book index via keyword search.
 
 
 Search Mode Functions
 =====================
 
+keyword_search(df, query, num_books=10):
+    Search for closest set of books  via keyword search.
 
+semantic_search(df, query, num_books=10):
+    Search for the closest books via keyword + semantic search. 
 
-
+plot_semantic_search(df, query, num_books = 10):
+    Search for closest set of books via pure semantic search.
+    
+author2_search(df, query, num_books=10):
+    Search for closest set of books via fuzzy match on author field.
 """
 
 import ast
@@ -52,7 +61,7 @@ vo = voyageai.Client(api_key=api_key)
 # load preprocessed distances/indices
 try:
     distances = np.load('bookworm/data/distances_updated.npy')
-except FileNotFoundError: 
+except FileNotFoundError:
     distances = np.load('data/distances_updated.npy')
 try:
     indices = np.load('bookworm/data/indices_updated.npy')
@@ -122,20 +131,41 @@ class HelperFunctions:
         
         Indices extracted from global variable indices. Indices
         variables assumed to reflect closest books based on
-        semantic search.
+        pre-processed semantic search.
         
         Parameters: 
             book_index: Int. The index of the book in the Indices 
-                            param that is the base of the search.
+                        param that is the base of the search.
             num_books:  Int. The number of indices to extract.
+                        Default is 10. 
         Returns: 
-            a numpy array of length num_books
+            A numpy array of length num_books
         """
         similar_books_indices = indices[book_index][:num_books]
         return similar_books_indices
 
     @staticmethod
     def query_to_index(df, query, vectorizer=None):
+        """ 
+        Maps query to the closest book index via keyword search.
+        
+        Maps query based to the closes book in dataframe (df) 
+        based on keyword search using given vectorizer(default
+        is TfidfVectorizer). Then returns the index of that book
+        in the dataframe.  
+
+        Parameters: 
+            df:     A pandas dataframe, each row representing a book. 
+                    Assumes df contains columns "book-title", "author",
+                    "genre", and "summary." 
+
+            query:      A string.  
+
+        num_books:  Int. The number of indices to extract. 
+                    Defualt is 10.
+    Returns: 
+        A numpy array of length num_books.
+    """
         df = HelperFunctions.fill_na(df)
         df["genre"] = df['genre'].apply(HelperFunctions.parse_genres)
         df['combined_text'] = df.apply(lambda x:HelperFunctions.preprocess_text(
@@ -152,6 +182,24 @@ class HelperFunctions:
         return most_relevant_index
 
 def keyword_search(df, query, num_books=10):
+    """ 
+    Search for closest set of books  via keyword search.
+    
+    Maps query to the closest books based on keyword search, 
+    using TfidVectorizer and English stopwords.
+
+     Parameters: 
+        df:         A pandas dataframe, each row representing a book. 
+                    Assumes df contains columns "book-title", "author",
+                    "genre", and "summary." 
+
+        query:      A string.  
+
+        num_books:  Int. The number of books to extract. 
+                    Defualt is 10.
+    Returns: 
+        A dataframe containing the selected books. 
+    """
     df = HelperFunctions.fill_na(df)
     df['genre'] = df['genre'].apply(HelperFunctions.parse_genres)
     df['combined_text'] = df.apply(lambda x: HelperFunctions.preprocess_text(
@@ -170,6 +218,25 @@ def keyword_search(df, query, num_books=10):
     return results
 
 def semantic_search(df, query, num_books=10):
+    """ 
+    Search for the closest books via keyword + embeddings search. 
+    
+    Maps query to the closest book (via keyword search), and then 
+    retrieves the closest books based on pre-processed 
+    semantic search distances. 
+
+    Parameters: 
+        df:         A pandas dataframe, each row representing a book. 
+                    Assumes df contains columns "book-title", "author",
+                    "genre", and "summary." 
+
+        query:      A string.  
+
+        num_books:  Int. The number of indices to extract. 
+                    Defualt is 10.
+    Returns: 
+        A numpy array of length num_books.
+    """
     book_index = HelperFunctions.query_to_index(df, query)
     semantic_indices = HelperFunctions.get_semantic_results(book_index,
                                                             num_books)
@@ -178,8 +245,21 @@ def semantic_search(df, query, num_books=10):
     results = df.loc[semantic_indices].head(num_books)
     return results
 
-# Function for fuzzy matching for author2 search
 def author2_search(df, query, num_books=10):
+
+    """
+    Search for closest set of books via fuzzy match on author field.
+
+    Parameters: 
+        df:     A pandas dataframe, each row representing a book. 
+                Assumes df contains column "author".
+        query:  A string.  
+
+        num_books:  Int. The number of books to extract. 
+                    Defualt is 10.
+    Returns: 
+        A dataframe containing the selected books. 
+    """
 
     def calculate_ratio(row):
         return fuzz.ratio(row['author'], query)
@@ -192,6 +272,24 @@ def author2_search(df, query, num_books=10):
     return results
 
 def plot_semantic_search(df, query, num_books = 10):
+    """
+    Search for closest set of books via pure semantic search.
+
+    Uses voyage-lite-02-instruct api to map query to a book
+    in dataframe df based on semantic search.  Then selects
+    closes set of books to matched book based on pre-computed
+    semantic embeddings.
+
+    Parameters: 
+        df:     A pandas dataframe, each row representing a book. 
+                Assumes df contains column "author".
+        query:  A string.  
+
+        num_books:  Int. The number of books to extract. 
+                    Defualt is 10.
+    Returns: 
+        A dataframe containing the selected books. 
+    """
     # computing embeddings for the query
     query_embedding = vo.embed(query, model="voyage-lite-02-instruct",
                                input_type="document").embeddings

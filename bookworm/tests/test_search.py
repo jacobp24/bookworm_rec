@@ -50,6 +50,7 @@ import unittest
 from unittest.mock import patch
 import pandas as pd
 import numpy as np
+import search
 from search import HelperFunctions
 
 
@@ -169,6 +170,20 @@ class TestHelperFunctions(unittest.TestCase):
                 expected = idx
                 result = HelperFunctions.query_to_index(self.test_dat, query)
                 self.assertEqual(result, expected)
+     
+    def test_keyword_exact(self):
+        """
+        Confirms that exact match queries return expected match
+        
+        Pattern test. In any case where the query string is an exact 
+        and unique match to the title of a book in the datset  
+        we expect the first book returned to be the exact match. 
+        """
+        for idx in [0]:
+            query = self.test_dat["book_title"][idx]
+            books = search.keyword_search(self.test_dat, query, num_books=10)
+            expected = books["book_title"][0]
+            self.assertEqual(expected, query)
 
 
     # def test_select_search(self):
