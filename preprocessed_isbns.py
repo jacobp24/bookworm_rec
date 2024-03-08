@@ -148,42 +148,6 @@ merged_rating_df = pd.merge(filt_complete, average_ratings, on='isbn_13',
 full_merged_df = pd.merge(merged_rating_df, rating_counts, on='isbn_13',
                           how='left')
 
-non_nan_count = full_merged_df['Book-Rating'].count()
-
-plt.hist(full_merged_df['Book-Rating'], bins=20)
-plt.title('Book Rating Distribution')
-plt.show()
-
-plt.hist(full_merged_df['RatingCount'], bins=20)
-plt.title('Rating Count Distribution')
-plt.show()
-
-non_nan_rating_count = full_merged_df['RatingCount'].count()
-
-max_rating_count = full_merged_df['RatingCount'].max()
-
-min_rating_count = full_merged_df['RatingCount'].min()
-
-max_rating = full_merged_df['Book-Rating'].max()
-
-min_rating = full_merged_df['Book-Rating'].min()
-
 # Creating cleaned data CSV
 full_merged_df.to_csv('complete_w_ratings.csv')
 
-
-# MAY DELETE LATER DEPENDING ON EMBEDDINGS
-# embedded = pd.read_csv('attempt_1/data_with_embeddings.csv')
-
-# updated_embeddings = pd.merge(embedded, full_merged_df, how='inner', \
-# on='ISBN')
-# updated_embeddings= updated_embeddings.loc[:,~updated_embeddings.columns \
-# .duplicated()]
-# columns_to_drop = [col for col in updated_embeddings.columns
-#                   if col.endswith('_y')]
-# updated_embeddings = updated_embeddings.drop(columns=columns_to_drop)
-# Remove "_x" from column names
-# updated_embeddings.columns = updated_embeddings.columns.str.replace('_x', '')
-# updated_embeddings.head()
-
-# updated_embeddings.to_csv('data_w_embeddings_updated.csv')
