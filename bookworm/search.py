@@ -50,7 +50,7 @@ from sklearn.metrics.pairwise import linear_kernel
 from sklearn.metrics.pairwise import cosine_similarity
 from thefuzz import fuzz
 from dotenv import load_dotenv
-# import voyageai
+import voyageai
 
 # load environment variables from .env file
 load_dotenv()
