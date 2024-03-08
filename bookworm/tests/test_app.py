@@ -107,6 +107,17 @@ class TestStreamlitUI(unittest.TestCase):
         """Test execute_query function."""
         with patch('streamlit.write') as mock_write:
             execute_query("Title", "The Great Gatsby", 8.0, 20)
+            expected_strings = (
+                'Searching for books using Title, value: The Great Gatsby,' +
+                'min average rating: 8.0, min number of ratings: 20'
+            )
+            actual_call = mock_write.call_args[0][0]
+            self.assertIn(expected_pattern, actual_call)
+                
+    def test_execute_query(self):
+        """Test execute_query function."""
+        with patch('streamlit.write') as mock_write:
+            execute_query("Title", "The Great Gatsby", 8.0, 20)
             mock_write.assert_called_once_with(
                 """Searching for books using Title, value: The Great Gatsby,
                     min average rating: 8.0, min number of ratings: 20""")
