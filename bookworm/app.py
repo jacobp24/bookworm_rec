@@ -43,7 +43,7 @@ def display_num_ratings_slider():
     return st.slider("Exclude Books that have been rated by fewer than:", min_value=0, max_value=50, \
                     value=0, step=1, key="Num. Ratings Slider", help="Set the minimum number of ratings.")
     
-def display_search_mode_UI():
+def display_search_mode_ui():
     help_text_string = "Choose how you want to prioritize your search." 
     selection = st.selectbox("Search Mode", [None] + SEARCH_MODES, help=help_text_string, key="search_mode")
 
@@ -55,7 +55,7 @@ def display_search_mode_UI():
 
     return search_mode
 
-def display_search_value_UI(search_mode): 
+def display_search_value_ui(search_mode): 
     if search_mode == "Genre": 
         return display_genre_dropdown()
     else:
