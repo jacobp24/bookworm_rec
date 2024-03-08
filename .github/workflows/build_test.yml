@@ -47,12 +47,9 @@ jobs:
 
     # The actual workflow steps!
     steps:
-      - name: Get API Key
       - uses: actions/checkout@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.API_KEY }}
-          FIRST_NAME: Jacob
-          LAST_NAME: Peterson
+
+      - name: Get API Key
 
       # Then set up Python with a python version from the matrix.
       - name: Set up Python ${{ matrix.python-version }}

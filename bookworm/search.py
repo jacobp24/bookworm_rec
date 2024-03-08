@@ -55,7 +55,8 @@ load_dotenv()
 
 # load API for embeddings voyage
 #api_key = os.getenv("API_KEY")
-api_key = os.environ['${{ secrets.API_KEY }}']
+#api_key = os.environ['${{ secrets.API_KEY }}']
+api_key = 'pa-_TFyoLW1iXGM-x7DAS3yNY27k1Uwrp8r_XRG7ofkajY'
 vo = voyageai.Client(api_key=api_key)
 
 # load preprocessed distances/indices
