@@ -108,8 +108,8 @@ class TestStreamlitUI(unittest.TestCase):
         with patch('streamlit.write') as mock_write:
             execute_query("Title", "The Great Gatsby", 8.0, 20)
             mock_write.assert_called_once_with(
-                """Searching for books using Title, value: The Great Gatsby,
-                    min average rating: 8.0, min number of ratings: 20""")
+                "Searching for books using Title, value: The Great Gatsby, "
+                "min average rating: 8.0, min number of ratings: 20")
 
 
 if __name__ == '__main__':
