@@ -96,7 +96,7 @@ def main():
     st.markdown(
         f"""
         <div class="container">
-            <img class="title-img" src="data:image/png;base64,{base64.b64encode(open(TITLE_IMAGE, "rb").read()).decode()}">
+            <img class="title-img" src="data:image/png;base64,{base64.b64encode(open(title_image, "rb").read()).decode()}">
             <p class="title-text">The Bookish Butterfly</p>
         </div>
         """,
