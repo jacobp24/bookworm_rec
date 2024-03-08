@@ -41,6 +41,8 @@ author2_search(df, query, num_books=10):
     Search for closest set of books via fuzzy match on author field.
 """
 
+import os
+
 import ast
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
