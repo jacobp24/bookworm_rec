@@ -30,7 +30,7 @@ from unittest.mock import patch
 
 import pandas as pd
 
-from app import main, display_avg_ratings_slider, display_num_ratings_slider, \
+from bookworm.app import main, display_avg_ratings_slider, display_num_ratings_slider, \
                 display_search_mode_ui, display_search_value_ui, \
                 display_genre_dropdown, display_search_button, execute_query
 
@@ -113,4 +113,3 @@ class TestStreamlitUI(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
