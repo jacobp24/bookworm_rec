@@ -135,8 +135,11 @@ def main():
     if search_val not in ["", None]:
         st.write("Click 'Search Now' when ready.")
         if search_button:
-            results = search_wrapper(search_mode, search_val, min_ave_rating, min_num_ratings)
-            col_to_show = ["book_title", "author", "Book-Rating", "RatingCount"]
-            st.write(results[col_to_show])
+            try: 
+                results = search_wrapper(search_mode, search_val, min_ave_rating, min_num_ratings)
+                col_to_show = ["book_title", "author", "Book-Rating", "RatingCount"]
+                st.write(results[col_to_show])
+            except ValueError as e:
+                st.write(f"{str(e)}")
 
 main()

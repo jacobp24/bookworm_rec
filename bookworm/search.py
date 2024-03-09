@@ -147,7 +147,7 @@ class HelperFunctions:
         return similar_books_indices
 
     @staticmethod
-    def query_to_index(df, query, vectorizer=None):
+    def query_to_index(df, query, columns, vectorizer=None, num_idx=1):
         """ 
         Maps query to the closest book index via keyword search.
         
@@ -157,22 +157,28 @@ class HelperFunctions:
         in the dataframe.  
 
         Parameters: 
-            df:     A pandas dataframe, each row representing a book. 
-                    Assumes df contains columns "book-title", "author",
-                    "genre", and "summary." 
+            df:         A pandas dataframe, each row representing a book. 
+                        Assumes df contains columns "book-title", "author",
+                        "genre", and "summary." 
 
             query:      A string.  
 
-        num_books:  Int. The number of indices to extract. 
-                    Defualt is 10.
+            columns:    The columns to search over for the keyword search.
+
+            num_idx:    Int. The number of indices to return.  Default is 1. 
     Returns: 
-        A numpy array of length num_books.
+        A numpy array of length num_idx.
     """
+
         df = HelperFunctions.fill_na(df)
         df["genre"] = df['genre'].apply(HelperFunctions.parse_genres)
-        df['combined_text'] = df.apply(lambda x:HelperFunctions.preprocess_text(
-            f"{x['book_title']} {x['author']} {(x['genre'])} {x['summary']}"),
-            axis=1)
+        df['combined_text'] = ''
+        for index, row in df.iterrows():
+            combined_text = ''
+            for col in columns:
+                new_txt = HelperFunctions.preprocess_text(str(row[col]))
+                combined_text += new_txt + ' '
+            df.at[index, 'combined_text'] = combined_text.strip()
 
         if vectorizer is None:
             vectorizer = TfidfVectorizer(stop_words='english')
@@ -180,15 +186,20 @@ class HelperFunctions:
         query_vec = vectorizer.transform([query])
         cosine_similarities = linear_kernel(query_vec,
                 vectorizer.transform(df['combined_text'])).flatten()
-        most_relevant_index = cosine_similarities.argsort()[-1]
-        return most_relevant_index
+        if num_idx == 1:
+            most_relevant_index = cosine_similarities.argsort()[-1]
+            return most_relevant_index
+        most_relevant_indices = cosine_similarities.argsort()[-num_idx:][::-1]
+        return most_relevant_indices
+
 
 def keyword_search(df, query, num_books=10):
     """ 
-    Search for closest set of books  via keyword search.
+    Search for closest set of books via keyword search.
     
     Maps query to the closest books based on keyword search, 
-    using TfidVectorizer and English stopwords.
+    using TfidVectorizer and English stopwords. Searches over all
+    columns of text. 
 
      Parameters: 
         df:         A pandas dataframe, each row representing a book. 
@@ -219,7 +230,7 @@ def keyword_search(df, query, num_books=10):
     results = df.loc[keyword_indices].head(num_books)
     return results
 
-def semantic_search(df, query, num_books=10):
+def semantic_search(df, query, columns, num_books=10):
     """ 
     Search for the closest books via keyword + embeddings search. 
     
@@ -234,12 +245,15 @@ def semantic_search(df, query, num_books=10):
 
         query:      A string.  
 
+        columns:    THe columns to search over during keyword search.
+
         num_books:  Int. The number of indices to extract. 
                     Defualt is 10.
     Returns: 
         A numpy array of length num_books.
     """
-    book_index = HelperFunctions.query_to_index(df, query)
+
+    book_index = HelperFunctions.query_to_index(df, query, columns)
     semantic_indices = HelperFunctions.get_semantic_results(book_index,
                                                             num_books)
     semantic_indices = semantic_indices.tolist() if \
@@ -262,13 +276,31 @@ def author2_search(df, query, num_books=10):
     Returns: 
         A dataframe containing the selected books. 
     """
+    #calculate match ratio
+    df['ratio'] = df.apply(lambda row: fuzz.ratio(row['author'], query), axis=1)
+    df_sorted = df.sort_values(by = "ratio",
+                               ascending = False).reset_index(drop=True)
 
-    def calculate_ratio(row):
-        return fuzz.ratio(row['author'], query)
-    # Apply the function to each row and store the result in a new column
-    df['ratio'] = df.apply(calculate_ratio, axis=1)
+
     # filter the database to only those rows with match > ratio
-    result = df[df["ratio"] > 75]
+    result = df_sorted[df_sorted["ratio"] > 75]
+    if result.empty:
+        # Offer suggestions if there are matches with 50 < ratio < 75
+        suggestions = []
+        for idx in range(3):
+            if df_sorted.iloc[idx]["ratio"] > 50:
+                auth = df_sorted.iloc[idx]["author"]
+                if not auth in suggestions:
+                    suggestions.append(auth)
+
+        err_msg = "That author does not appear in our database."
+        if not suggestions:
+            err_msg += " Perhaps you can try plot search."
+        else:
+            err_msg += f" Perhaps you meant one of these authors? {suggestions}"
+
+        raise ValueError(err_msg)
+
     results_sorted = result.sort_values(by='Book-Rating', ascending=False)
     results = results_sorted.head(num_books)
     return results
