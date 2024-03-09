@@ -12,7 +12,7 @@ ISBN and ratings.
 import pandas as pd
 
 
-complete = pd.read_csv('bookworm/data/complete_data.csv')
+complete = pd.read_csv('data/complete_data.csv')
 
 complete['ISBN'] = complete['ISBN'].astype(str)
 
@@ -32,7 +32,7 @@ def transform_isbn(isbn):
         raise ValueError('Input must be string')
 
     if len(isbn) == 15:
-        return isbn[:-2]  # Cut the last two characters
+        return isbn[:-2]  # Cut the last two chars
     if len(isbn) == 10:
         return isbn  # No modification needed for 10-digit ISBN
     return None
@@ -46,16 +46,9 @@ complete = complete.dropna(subset=['ISBN'])
 # Filtering out rows with invalid ISBNs
 filt_complete = complete[complete['ISBN'].str[:-1].str.isnumeric()]
 
-BOOK_RATINGS_PATH = 'data/BX-Book-Ratings.csv'
+BOOK_RATINGS_PATH = '../data/BX-Book-Ratings.csv'
 book_rating = pd.read_csv(BOOK_RATINGS_PATH, sep=';', quotechar='"',
                           encoding='windows-1252')
-book_rating['ISBN'] = book_rating['ISBN'].astype(str)
-string_length_counts_2 = book_rating['ISBN'].str.len().value_counts()
-
-preprocessed = pd.read_csv('data/Preprocessed_data.csv')
-preprocessed['isbn'] = preprocessed['isbn'].astype(str)
-preprocessed.rename(columns={'isbn': 'ISBN'}, inplace=True)
-string_length_counts_3 = preprocessed['ISBN'].str.len().value_counts()
 
 
 def check_digit_13(isbn):
@@ -129,37 +122,37 @@ def complete_to_13(isbn):
 
 
 # Change ISBN from 10 to 13 or keep at 13
-filt_complete['isbn_13'] = filt_complete['ISBN'].apply(complete_to_13)
+# filt_complete['isbn_13'] = filt_complete['ISBN'].apply(complete_to_13)
 
-book_rating = book_rating[book_rating['ISBN'].str.len() == 10]
+# book_rating = book_rating[book_rating['ISBN'].str.len() == 10]
 
 # Filtering out rows with invalid ISBNs
-filt_book_rating = book_rating[book_rating['ISBN'].str[:-1].str.isnumeric()]
+# filt_book_rating = book_rating[book_rating['ISBN'].str[:-1].str.isnumeric()]
 
 
 # Converting from ISBN 10 to ISBN 13
-filt_book_rating['isbn_13'] = filt_book_rating['ISBN'].apply(convert_10_to_13)
-filt_book_rating.tail()
+# filt_book_rating['isbn_13'] = filt_book_rating['ISBN'].apply(convert_10_to_13)
+# filt_book_rating.tail()
 
 # Filtering out 0 ratings
-filt_book_rating = filt_book_rating[filt_book_rating['Book-Rating'] != 0]
+# filt_book_rating = filt_book_rating[filt_book_rating['Book-Rating'] != 0]
 
 # Counting how many times an ISBN has been rated
-rating_counts = filt_book_rating.groupby('isbn_13')['Book-Rating'].count() \
-                                .reset_index()
-rating_counts.columns = ['isbn_13', 'RatingCount']
+# rating_counts = filt_book_rating.groupby('isbn_13')['Book-Rating'].count() \
+#                                 .reset_index()
+# rating_counts.columns = ['isbn_13', 'RatingCount']
 
 # Calculating average ratings
-average_ratings = filt_book_rating.groupby('isbn_13')['Book-Rating'].mean() \
-                                    .reset_index()
+# average_ratings = filt_book_rating.groupby('isbn_13')['Book-Rating'].mean() \
+#                                   .reset_index()
 
 # joining ratings
-merged_rating_df = pd.merge(filt_complete, average_ratings, on='isbn_13',
-                            how='left')
+# merged_rating_df = pd.merge(filt_complete, average_ratings, on='isbn_13',
+#                           how='left')
 
 # joining ratings count
-full_merged_df = pd.merge(merged_rating_df, rating_counts, on='isbn_13',
-                          how='left')
+# full_merged_df = pd.merge(merged_rating_df, rating_counts, on='isbn_13',
+#                          how='left')
 
 # Creating cleaned data CSV
-full_merged_df.to_csv('complete_w_ratings.csv')
+# full_merged_df.to_csv('complete_w_ratings.csv')
