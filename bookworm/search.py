@@ -166,8 +166,8 @@ class HelperFunctions:
             columns:    The columns to search over for the keyword search.
 
             num_idx:    Int. The number of indices to return.  Default is 1. 
-    Returns: 
-        A numpy array of length num_idx.
+        Returns: 
+            A numpy array of length num_idx.
     """
 
         df = HelperFunctions.fill_na(df)

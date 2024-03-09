@@ -196,7 +196,7 @@ class TestSearch(unittest.TestCase):
     """
     def setUp(self):
         """ 
-        Creates and loads teating data. 
+        Creates and loads testing data. 
         """
         try:
             f = "data/test_data_w_embeddings.csv"
@@ -260,7 +260,7 @@ class TestSearch(unittest.TestCase):
         query = "gribnif blah blah blah"
         with self.assertRaises(ValueError):
             search.author2_search(self.test_dat, query, num_books=10)
-        
+
     def test_plot_semantic(self):
         """
         Test plot_semantic_search against expected result.
@@ -274,6 +274,7 @@ class TestSearch(unittest.TestCase):
         books = search.plot_semantic_search(self.test_dat, query, num_books=10)
         results = books.iloc[0]["book_id"]
         expected = self.test_dat.iloc[7]["book_id"] # 7 = idx for Leaf by Niggle
+        # print(self.test_dat[self.test_dat["book_id"] == 18560])
         self.assertEqual(results, expected)
 
     # def test_semantic(self):
