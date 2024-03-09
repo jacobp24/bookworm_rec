@@ -187,17 +187,17 @@ class TestSelectSearch(unittest.TestCase):
     #                                            "J. R. Tolkien")
     #     self.assertEqual(results, "Keyword search performed")
 
-    @mock.patch("search.keyword_search")
+    @mock.patch("search.genre_search")
     def test_select_search_genre(self, mock_keyword_search):
         """
         Confirm correct search function called for search_mode genre
         """
         f = "data/test_data.csv"
         test_dat = pd.read_csv(f)
-        mock_keyword_search.return_value = "Keyword search performed"
+        mock_keyword_search.return_value = "Genre search performed"
         results = search_wrapper.select_search(test_dat, "Genre",
                                                "J. R. Tolkien")
-        self.assertEqual(results, "Keyword search performed")
+        self.assertEqual(results, "Genre search performed")
 
 class TestAssembleData(unittest.TestCase):
     """Test cases for the assemble_data function"""
