@@ -247,16 +247,20 @@ class TestSearch(unittest.TestCase):
         One shot test. Search for author "JR Tolkien" to see if first
         book return is by "J.R.R. Tolkien" as listed in test data. 
         """
-        #query = "JRR Tolkien"
-        query = "Tolkien"
+        query = "JRR Tolkien"
         books = search.author2_search(self.test_dat, query, num_books=10)
-        if books.empty:
-            error_msg = "Oops, we can't find that author"
-            raise ValueError(error_msg)
         results = books.iloc[0]["author"]
         expected = "J. R. R. Tolkien"
         self.assertEqual(results, expected)
 
+    def test_author2_search_nomatch(self):
+        """
+        Confirm error raised if no matching author.
+        """
+        query = "gribnif blah blah blah"
+        with self.assertRaises(ValueError):
+            search.author2_search(self.test_dat, query, num_books=10)
+        
     def test_plot_semantic(self):
         """
         Test plot_semantic_search against expected result.

@@ -124,7 +124,7 @@ def main():
     # Display search mode, value, and button
     search_mode = display_search_mode_ui()
     search_val = display_search_value_ui(search_mode)
-    
+
     # Display filters
     st.write("Adjust search filters as desired:")
     min_ave_rating = display_avg_ratings_slider()
@@ -135,7 +135,7 @@ def main():
     if search_val not in ["", None]:
         st.write("Click 'Search Now' when ready.")
         if search_button:
-            try: 
+            try:
                 results = search_wrapper(search_mode, search_val, min_ave_rating, min_num_ratings)
                 col_to_show = ["book_title", "author", "Book-Rating", "RatingCount"]
                 st.write(results[col_to_show])
