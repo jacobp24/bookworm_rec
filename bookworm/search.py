@@ -42,7 +42,6 @@ author2_search(df, query, num_books=10):
 """
 
 import os
-
 import ast
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -151,7 +150,7 @@ class HelperFunctions:
         """ 
         Maps query to the closest book index via keyword search.
         
-        Maps query based to the closes book in dataframe (df) 
+        Maps query based to the closest book in dataframe (df) 
         based on keyword search using given vectorizer(default
         is TfidfVectorizer). Then returns the index of that book
         in the dataframe.  

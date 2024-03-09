@@ -36,17 +36,26 @@ test_query_exact(self):
 Test Functions in TestSearch Class
 ======================================    
 
+test_keyword_exact(self):
+    Confirms that exact match queries return expected match. 
+
+test_author2_search_exact(self):
+    Confirm author2_search returs books by that author only; exact match.
+
+test_author2_search_close(self):
+    Confirm author2_search returs books by that author only; close match.
+
+test_author2_search_nomatch(self):
+    Confirm error raised if no matching author.
+
 test_plot_semantic(self):
     Test plot_semantic_search against expected result.
 
-test_keyword_close(self):
-    Confirms that close match queries return expected match.
+test_genre_one_shot(self):
+    Confirm genre search returns expected result.
 
-test_keyword_exact(self):
-    Confirms that exact match queries return expected match.
-        
-
-
+test_genre_all:
+    Confirm sum of all genres is sum of all rows in data.       
 
 Dependencies:
 - unittest: The built-in unit testing framework in Python.
@@ -200,6 +209,8 @@ class TestSearch(unittest.TestCase):
         self.test_dat_e = pd.read_csv(f_embed)
         f_ratings = "data/test_data/test_data.csv"
         self.test_dat_r = pd.read_csv(f_ratings)
+        f_genre = "data/test_data/test_genre.csv"
+        self.test_data_g = pd.read_csv(f_genre)
 
 
     def test_keyword_exact(self):
@@ -207,7 +218,7 @@ class TestSearch(unittest.TestCase):
         Confirms that exact match queries return expected match
         
         Pattern test. In any case where the query string is an exact 
-        and unique match to the title of a book in the datset  
+        match to the title of a book in the datset  
         we expect the first book returned to be the exact match. 
         """
         for idx in range(2):
@@ -241,7 +252,7 @@ class TestSearch(unittest.TestCase):
         Confirm author2_search returs books by that author only; close match.
         
         One shot test. Search for author "JR Tolkien" to see if first
-        book return is by "J.R.R. Tolkien" as listed in test data. 
+        book returned is by "J.R.R. Tolkien" as listed in test data. 
         """
         query = "JRR Tolkien"
         books = search.author2_search(self.test_dat_r, query, num_books=10)
@@ -289,6 +300,37 @@ class TestSearch(unittest.TestCase):
     #     results = books.iloc[0]["book_id"]
     #     expected = self.test_dat.iloc[7]["book_id"] # 7 = idx for Leaf by Niggle
     #     self.assertEqual(results, expected)
+
+    def test_genre_one_shot(self):
+        """ 
+        Confirm genre search returns expected result.
+
+        Using test data, genre search for "Horrer" should return
+        one book, titled "The Queen of the Damned." 
+        """
+        df = self.test_data_g
+        query = "Horror"
+        results = search.genre_search(df, query).iloc[0]["book_title"]
+        expected = "The Queen of the Damned"
+        self.assertEqual(results,expected)
+
+    def test_genre_all(self):
+        """ Confirm sum of all genres is sum of dataset.
+        
+        Iterates over the rows in the test data. Counts the number
+        of rows returned for each genre and sums the total. Expected
+        total sum is the number of rows in the genre dataset.
+        """
+        df = self.test_data_g
+        all_genres = set(df["generic_genre"])
+        count = 0
+        for genre in all_genres:
+            results = search.genre_search(df, genre, num_books=df.shape[0])
+            count += results.shape[0]
+        expected = df.shape[0]
+        self.assertEqual(count, expected)
+
+
 
 
 if __name__ == '__main__':
