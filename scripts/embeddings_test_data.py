@@ -3,6 +3,7 @@ Script to create embeddings for test data
 """
 
 
+#import os
 import pandas as pd
 import nltk
 #from nltk.tokenize import word_tokenize
@@ -10,9 +11,12 @@ import voyageai
 
 
 nltk.download('punkt')
-
-df = pd.read_csv("bookworm/data/test_data.csv")
-vo = voyageai.Client(api_key="pa-rhN-u_ArM1uxKF78V1JeB8-TJZM0lQlA60SIavXNHbg")
+f_test_dat = "bookworm/data/test_data/test_data.csv"
+df = pd.read_csv(f_test_dat)
+# load API for embeddings voyage
+#api_key = os.environ['API_KEY']
+api_key = "pa-rhN-u_ArM1uxKF78V1JeB8-TJZM0lQlA60SIavXNHbg"
+vo = voyageai.Client(api_key=api_key)
 
 def token_count(summary):
     """ 
@@ -38,4 +42,5 @@ embeddings = vo.embed(texts, model="voyage-lite-02-instruct",
 filtered_df["embeddings"] = embeddings
 
 # save to CSV
-filtered_df.to_csv("bookworm/data/test_data_w_embeddings.csv")
+f_test_dat_embed = "bookworm/data/test_data/test_data_w_embeddings.csv"
+filtered_df.to_csv(f_test_dat_embed)

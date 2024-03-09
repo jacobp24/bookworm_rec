@@ -78,10 +78,10 @@ class TestHelperFunctions(unittest.TestCase):
         Creates and loads teating data. 
         """
         try:
-            f = "data/test_data_w_embeddings.csv"
+            f = "data/test_data/test_data_w_embeddings.csv"
             self.test_dat = pd.read_csv(f)
         except ImportError:
-            f = "bookworm/data/test_data_w_embeddings.csv"
+            f = "bookworm/data/test_data/test_data_w_embeddings.csv"
             self.test_dat = pd.read_csv(f)
 
 
@@ -199,10 +199,10 @@ class TestSearch(unittest.TestCase):
         Creates and loads testing data. 
         """
         try:
-            f = "data/test_data_w_embeddings.csv"
+            f = "data/test_data/test_data_w_embeddings.csv"
             self.test_dat = pd.read_csv(f)
         except ImportError:
-            f = "bookworm/data/test_data_w_embeddings.csv"
+            f = "bookworm/data/test_data/test_data_w_embeddings.csv"
             self.test_dat = pd.read_csv(f)
 
 
