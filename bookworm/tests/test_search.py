@@ -77,15 +77,11 @@ class TestHelperFunctions(unittest.TestCase):
         """ 
         Creates and loads teating data. 
         """
-        try:
-            f = "data/test_data/test_data_w_embeddings.csv"
-            self.test_dat = pd.read_csv(f)
-        except ImportError:
-            f = "bookworm/data/test_data/test_data_w_embeddings.csv"
-            self.test_dat = pd.read_csv(f)
-
-
-        self.test_dat_filled = HelperFunctions.fill_na(self.test_dat)
+        f_embed = "data/test_data/test_data_w_embeddings.csv"
+        self.test_dat_e = pd.read_csv(f_embed)
+        f_ratings = "data/test_data/test_data.csv"
+        self.test_dat_r = pd.read_csv(f_ratings)
+        self.test_dat_filled = HelperFunctions.fill_na(self.test_dat_e)
 
         unfilled_data = {'author': ['Author1', None, 'Author3'],
                 'book_title': ['Book1', None, 'Book3'],
@@ -116,7 +112,7 @@ class TestHelperFunctions(unittest.TestCase):
         Using book-ID = 4081 from test_data, expected result
         is "Science Fiction, Speculative fiction".
         """
-        df = self.test_dat
+        df = self.test_dat_e
         val_to_parse = df[df["book_id"] == 4081]["genre"][0]
         results = HelperFunctions.parse_genres(val_to_parse)
         expected = "Science Fiction, Speculative fiction"
@@ -158,7 +154,7 @@ class TestHelperFunctions(unittest.TestCase):
         """
         query = "Book of Job"
         columns = ["book_title"]
-        index = HelperFunctions.query_to_index(self.test_dat, query, columns)
+        index = HelperFunctions.query_to_index(self.test_dat_e, query, columns)
         self.assertIsInstance(index, np.int64)
 
     @patch("search.HelperFunctions.fill_na")
@@ -168,8 +164,8 @@ class TestHelperFunctions(unittest.TestCase):
         """
         mock_fill_na.return_value = self.test_dat_filled
         columns = ["book_title"]
-        HelperFunctions.query_to_index(self.test_dat, "dog", columns)
-        mock_fill_na.assert_called_once_with(self.test_dat)
+        HelperFunctions.query_to_index(self.test_dat_e, "dog", columns)
+        mock_fill_na.assert_called_once_with(self.test_dat_e)
 
 
     def test_query_exact(self):
@@ -183,27 +179,27 @@ class TestHelperFunctions(unittest.TestCase):
         columns = ["book_title", "author", "genre"]
         for col in columns:
             for idx in [0, 10]:
-                query = self.test_dat[col][idx]
+                query = self.test_dat_e[col][idx]
                 expected = idx
-                result = HelperFunctions.query_to_index(self.test_dat,
+                result = HelperFunctions.query_to_index(self.test_dat_e,
                                                 query, [col])
             self.assertEqual(result, expected)
 
 
 class TestSearch(unittest.TestCase):
+
     """
     Test cases for the Search Functions in Test Module
     """
+
     def setUp(self):
         """ 
-        Creates and loads testing data. 
+        Creates and loads teating data. 
         """
-        try:
-            f = "data/test_data/test_data_w_embeddings.csv"
-            self.test_dat = pd.read_csv(f)
-        except ImportError:
-            f = "bookworm/data/test_data/test_data_w_embeddings.csv"
-            self.test_dat = pd.read_csv(f)
+        f_embed = "data/test_data/test_data_w_embeddings.csv"
+        self.test_dat_e = pd.read_csv(f_embed)
+        f_ratings = "data/test_data/test_data.csv"
+        self.test_dat_r = pd.read_csv(f_ratings)
 
 
     def test_keyword_exact(self):
@@ -215,8 +211,8 @@ class TestSearch(unittest.TestCase):
         we expect the first book returned to be the exact match. 
         """
         for idx in range(2):
-            query = self.test_dat["book_title"][idx]
-            books = search.keyword_search(self.test_dat, query, num_books=10)
+            query = self.test_dat_e["book_title"][idx]
+            books = search.keyword_search(self.test_dat_e, query, num_books=10)
             results = books.iloc[0]["book_title"]
             expected = query
             self.assertEqual(results, expected)
@@ -233,8 +229,8 @@ class TestSearch(unittest.TestCase):
         """
 
         for idx in [0,3,4,5,7,8,9]: #exclude rows with nan author
-            query = self.test_dat["author"][idx]
-            books = search.author2_search(self.test_dat, query, num_books=10)
+            query = self.test_dat_r["author"][idx]
+            books = search.author2_search(self.test_dat_r, query, num_books=10)
             for idx2 in range(books.shape[0]):
                 results = books.iloc[idx2]["author"]
                 expected = query
@@ -248,7 +244,7 @@ class TestSearch(unittest.TestCase):
         book return is by "J.R.R. Tolkien" as listed in test data. 
         """
         query = "JRR Tolkien"
-        books = search.author2_search(self.test_dat, query, num_books=10)
+        books = search.author2_search(self.test_dat_r, query, num_books=10)
         results = books.iloc[0]["author"]
         expected = "J. R. R. Tolkien"
         self.assertEqual(results, expected)
@@ -259,7 +255,7 @@ class TestSearch(unittest.TestCase):
         """
         query = "gribnif blah blah blah"
         with self.assertRaises(ValueError):
-            search.author2_search(self.test_dat, query, num_books=10)
+            search.author2_search(self.test_dat_r, query, num_books=10)
 
     def test_plot_semantic(self):
         """
@@ -271,9 +267,9 @@ class TestSearch(unittest.TestCase):
 
         """
         query = "A man paints a tree."
-        books = search.plot_semantic_search(self.test_dat, query, num_books=10)
+        books = search.plot_semantic_search(self.test_dat_e, query, num_books=10)
         results = books.iloc[0]["book_id"]
-        expected = self.test_dat.iloc[7]["book_id"] # 7 = idx for Leaf by Niggle
+        expected = self.test_dat_e.iloc[7]["book_id"] # 7 = idx for Leaf by Niggle
         # print(self.test_dat[self.test_dat["book_id"] == 18560])
         self.assertEqual(results, expected)
 

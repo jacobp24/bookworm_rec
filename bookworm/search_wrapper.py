@@ -14,7 +14,7 @@ assemble_data(path1, path2, path3, path4)
 filter_ratings(results, min_ave_ratings, min_num_rating)
     Filters serach results by user ratings prefrences. 
 
-select_search(df, search_mode, search_value, min_ave_rating, 
+select_search(search_mode, search_value, min_ave_rating, 
                   min_num_ratings, num_book=10)
     Selects and implements search based on user search mode.
 
@@ -53,6 +53,19 @@ def assemble_data(path1, path2, path3, path4):
     df = pd.concat([df1, df2, df3, df4], ignore_index=True)
     return df
 
+def assemble_embeddings_data():
+    """
+    Functions that assembles the data with embeddings
+    """
+    # Create file paths
+
+    path_root = "data/complete_w_embeddings/complete_w_embeddings.csv"
+    path1 = path_root + "_part_1.csv"
+    path2 = path_root + "_part_2.csv"
+    path3 = path_root + "_part_3.csv"
+    path4 = path_root + "_part_4.csv"
+    return assemble_data(path1, path2, path3, path4)
+
 # Filter
 def filter_ratings(results, min_ave_ratings, min_num_rating):
 
@@ -87,13 +100,11 @@ def filter_ratings(results, min_ave_ratings, min_num_rating):
         results_filtered = subset_df
     return results_filtered
 
-def select_search(df, search_mode, search_value, num_books=10):
+def select_search(search_mode, search_value, num_books=10):
     """
     Selects and implements search based on user search mode.
 
     Parameters:
-        df: pandas.DataFrame
-            The dataframe to perform the search on.
         search_mode: str
             The mode of search ('Author2', 'Title', 'Plot', 'Genre').
         search_value: str
@@ -103,16 +114,19 @@ def select_search(df, search_mode, search_value, num_books=10):
 
     Returns:
         pandas.DataFrame
-            A dataframe of filtered search results.
+            A dataframe of search results.
     """
 
     if search_mode == "Author2":
+        df = pd.read_csv("data/complete_w_ratings.csv")
         results = search.author2_search(df, search_value,
                                         num_books=max(num_books * 2, 20))
     elif search_mode == "Title":
+        df = assemble_embeddings_data()
         results = search.semantic_search(df, search_value, ["book_title"],
                                          num_books=max(num_books * 2, 20))
     elif search_mode == "Plot":
+        df = assemble_embeddings_data()
         results = search.plot_semantic_search(df, search_value,
                                               num_books=max(num_books * 2, 20))
     elif search_mode == "Genre":
@@ -122,7 +136,9 @@ def select_search(df, search_mode, search_value, num_books=10):
             genre_df = pd.read_csv("data/genre.csv")
         results = search.genre_search(genre_df, search_value,
                                       num_books=max(num_books * 2, 20))
+
     else:  # Default to keyword search on all columns for other modes
+        df = pd.read_csv("data/complete_w_ratings.csv")
         results = search.keyword_search(df, search_value,
                                         num_books=max(num_books * 2, 20))
 
@@ -145,24 +161,9 @@ def search_wrapper(search_mode, search_value, min_ave_rating,
     Returns
         A dataframe of filtered search results. 
     """
-    # assemble data
-    try:
-        path_root = "bookworm/data/complete_w_embeddings/complete_w_embeddings.csv"
-        path1 = path_root + "_part_1.csv"
-        path2 = path_root + "_part_2.csv"
-        path3 = path_root + "_part_3.csv"
-        path4 = path_root + "_part_4.csv"
-        df = assemble_data(path1, path2, path3, path4)
-    except FileNotFoundError:
-        path_root = "data/complete_w_embeddings/complete_w_embeddings.csv"
-        path1 = path_root + "_part_1.csv"
-        path2 = path_root + "_part_2.csv"
-        path3 = path_root + "_part_3.csv"
-        path4 = path_root + "_part_4.csv"
-        df = assemble_data(path1, path2, path3, path4)
 
     # search
-    results = select_search(df, search_mode, search_value, num_books)
+    results = select_search(search_mode, search_value, num_books)
 
     #filter
     results_filtered = filter_ratings(results, min_ave_rating, min_num_ratings)
