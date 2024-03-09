@@ -105,17 +105,23 @@ def select_search(df, search_mode, search_value, num_books=10):
         results = search.author2_search(df, search_value,
                                         num_books=max(num_books*2, 20))
     elif search_mode == "Title":
-        results = search.semantic_search(df, search_value,
+        columns = ["book_title"]
+        results = search.semantic_search(df, search_value, columns,
                                          num_books=max(num_books*2, 20))
+    # elif search_mode == "Author1":
+    #     columns = ["author"]
+    #     results = search.semantic_search(df, search_value, columns,
+    #                                      num_books=max(num_books*2, 20))
+
     elif search_mode == "Plot":
         results = search.plot_semantic_search(df, search_value,
                                               num_books=max(num_books*2, 20))
-    else:
+
+    else: #genre [and author1] = keyword search on all columns
         results = search.keyword_search(df, search_value,
                                         num_books=max(num_books*2, 20))
 
     return results
-
 
 def search_wrapper(search_mode, search_value, min_ave_rating,
                    min_num_ratings, num_books=10):
