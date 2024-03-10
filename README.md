@@ -1,4 +1,8 @@
 # The bookworm project. 
+[![build_test](https://github.com/jacobp24/bookworm_rec/actions/workflows/build_test.yml/badge.svg)](https://github.com/jacobp24/bookworm_rec/actions/workflows/build_test.yml)
+[![coverage](https://img.shields.io/coverallsCoverage/github/jacobp24/bookworm_rec)](https://github.com/jacobp24/bookworm_rec)
+
+
 Jacob Peterson, Lawrie Brunswick, Priyam Gupta, Sue Boyd 
 
 ##  Project Type
