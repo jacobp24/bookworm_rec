@@ -89,33 +89,44 @@ def filter_ratings(results, min_ave_ratings, min_num_rating):
 
 def select_search(df, search_mode, search_value, num_books=10):
     """
-     Selects and implements search based on user search mode.
+    Selects and implements search based on user search mode.
 
-    Paramaters
-        Search_mode: A string. 
-        Search_value: A string. 
-        min_ave_ratings: A float. The min ave ratings to filter
-        min-num_ratings: An int.  The min number of ratings to filter on.
-        num_books: # of books returned from the search, pre-filtering.
-    Returns
-        A dataframe of filtered search results. 
+    Parameters:
+        df: pandas.DataFrame
+            The dataframe to perform the search on.
+        search_mode: str
+            The mode of search ('Author2', 'Title', 'Plot', 'Genre').
+        search_value: str
+            The value to search for.
+        num_books: int, optional
+            The number of books to return from the search, pre-filtering.
+
+    Returns:
+        pandas.DataFrame
+            A dataframe of filtered search results.
     """
 
     if search_mode == "Author2":
         results = search.author2_search(df, search_value,
-                                        num_books=max(num_books*2, 20))
+                                        num_books=max(num_books * 2, 20))
     elif search_mode == "Title":
-        results = search.semantic_search(df, search_value,
-                                         num_books=max(num_books*2, 20))
+        results = search.semantic_search(df, search_value, ["book_title"],
+                                         num_books=max(num_books * 2, 20))
     elif search_mode == "Plot":
         results = search.plot_semantic_search(df, search_value,
-                                              num_books=max(num_books*2, 20))
-    else:
+                                              num_books=max(num_books * 2, 20))
+    elif search_mode == "Genre":
+        try:
+            genre_df = pd.read_csv("bookworm/data/genre.csv")
+        except FileNotFoundError:
+            genre_df = pd.read_csv("data/genre.csv")
+        results = search.genre_search(genre_df, search_value,
+                                      num_books=max(num_books * 2, 20))
+    else:  # Default to keyword search on all columns for other modes
         results = search.keyword_search(df, search_value,
-                                        num_books=max(num_books*2, 20))
+                                        num_books=max(num_books * 2, 20))
 
     return results
-
 
 def search_wrapper(search_mode, search_value, min_ave_rating,
                    min_num_ratings, num_books=10):
@@ -135,7 +146,6 @@ def search_wrapper(search_mode, search_value, min_ave_rating,
         A dataframe of filtered search results. 
     """
     # assemble data
-    # pylint: disable=bare-except
     try:
         path_root = "bookworm/data/complete_w_embeddings/complete_w_embeddings.csv"
         path1 = path_root + "_part_1.csv"
@@ -143,7 +153,7 @@ def search_wrapper(search_mode, search_value, min_ave_rating,
         path3 = path_root + "_part_3.csv"
         path4 = path_root + "_part_4.csv"
         df = assemble_data(path1, path2, path3, path4)
-    except:
+    except FileNotFoundError:
         path_root = "data/complete_w_embeddings/complete_w_embeddings.csv"
         path1 = path_root + "_part_1.csv"
         path2 = path_root + "_part_2.csv"
