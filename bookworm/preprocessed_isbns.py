@@ -32,7 +32,7 @@ def transform_isbn(isbn):
         raise ValueError('Input must be string')
 
     if len(isbn) == 15:
-        return isbn[:-2]  # Cut the last two characters
+        return isbn[:-2]  # Cut the last two chars
     if len(isbn) == 10:
         return isbn  # No modification needed for 10-digit ISBN
     return None
