@@ -79,6 +79,17 @@ except ImportError:
 class TestFilter(unittest.TestCase):
     """Test cases for the filter_ratings function"""
 
+    def setUp(self):
+        """ 
+        Creates and loads testing data. 
+        """
+        try:
+            f = "data/test_data/test_data_w_embeddings.csv"
+            self.test_dat = pd.read_csv(f)
+        except ImportError:
+            f = "bookworm/data/test_data/test_data_w_embeddings.csv"
+            self.test_dat = pd.read_csv(f)
+
     def test_filter_min_ave_ratings(self):
         """ 
         Confirm that filter_ratings() properly filters by average ratings. 
@@ -86,8 +97,7 @@ class TestFilter(unittest.TestCase):
         Using test data as input and setting average ratings filter to
         6 should result in 2 entries remaining after filtering. 
         """
-        f = "data/test_data.csv"
-        test_dat = pd.read_csv(f)
+        test_dat = self.test_dat
         results = search_wrapper.filter_ratings(test_dat, 6, 0)
         self.assertEqual(results.shape[0], 2)
 
@@ -98,8 +108,7 @@ class TestFilter(unittest.TestCase):
         Using test dat as input and setting number of ratings filter 
         to 6 should result in 1 entry remaining after filtering. 
         """
-        f = "data/test_data.csv"
-        test_dat = pd.read_csv(f)
+        test_dat = self.test_dat
         results = search_wrapper.filter_ratings(test_dat, 0, 6)
         self.assertEqual(results.shape[0], 1)
 
@@ -111,8 +120,7 @@ class TestFilter(unittest.TestCase):
         filter to zero should return data in same shape as original
         data.
         """
-        f = "data/test_data.csv"
-        test_dat = pd.read_csv(f)
+        test_dat = self.test_dat
         results = search_wrapper.filter_ratings(test_dat, 0, 0)
         self.assertEqual(results.shape[0], test_dat.shape[0])
 
@@ -139,13 +147,25 @@ class TestFilter(unittest.TestCase):
 class TestSelectSearch(unittest.TestCase):
     """Test cases for the filter_ratings function"""
 
+
+    def setUp(self):
+        """ 
+        Creates and loads testing data. 
+        """
+        try:
+            f = "data/test_data/test_data_w_embeddings.csv"
+            self.test_dat = pd.read_csv(f)
+        except ImportError:
+            f = "bookworm/data/test_data/test_data_w_embeddings.csv"
+            self.test_dat = pd.read_csv(f)
+
+
     @mock.patch("search.author2_search")
     def test_select_search_author2(self, mock_author2_search):
         """
         Confirm correct search function called for search_mode Author2
         """
-        f = "data/test_data.csv"
-        test_dat = pd.read_csv(f)
+        test_dat = self.test_dat
         mock_author2_search.return_value = "Author2 search performed"
         results = search_wrapper.select_search(test_dat, "Author2",
                                                "J. R. Tolkien")
@@ -156,8 +176,7 @@ class TestSelectSearch(unittest.TestCase):
         """
         Confirm correct search function called for search_mode Title
         """
-        f = "data/test_data.csv"
-        test_dat = pd.read_csv(f)
+        test_dat = self.test_dat
         mock_semantic_search.return_value = "Semantic search performed"
         results = search_wrapper.select_search(test_dat, "Title",
                                                "Wolves of the Calla")
@@ -168,8 +187,7 @@ class TestSelectSearch(unittest.TestCase):
         """
         Confirm correct search function called for search_mode Plot
         """
-        f = "data/test_data.csv"
-        test_dat = pd.read_csv(f)
+        test_dat = self.test_dat
         mock_plot_semantic_search.return_value = "Plot search performed"
         results = search_wrapper.select_search(test_dat, "Plot",
                                                "J. R. Tolkien")
@@ -192,8 +210,7 @@ class TestSelectSearch(unittest.TestCase):
         """
         Confirm correct search function called for search_mode genre
         """
-        f = "data/test_data.csv"
-        test_dat = pd.read_csv(f)
+        test_dat = self.test_dat
         mock_keyword_search.return_value = "Genre search performed"
         results = search_wrapper.select_search(test_dat, "Genre",
                                                "J. R. Tolkien")
@@ -206,10 +223,10 @@ class TestAssembleData(unittest.TestCase):
         """
         Helper function; creates mock paths for assemble_function tests
         """
-        path1 = "data/test_data.csv"
-        path2 = "data/test_data2.csv"
-        path3 = "data/test_data3.csv"
-        path4 = "data/test_data3.csv"
+        path1 = "data/test_data/test_data.csv"
+        path2 = "data/test_data/test_data2.csv"
+        path3 = "data/test_data/test_data3.csv"
+        path4 = "data/test_data/test_data3.csv"
         return (path1, path2, path3, path4)
 
     def test_assemble_data_smoke_test(self):
@@ -242,7 +259,7 @@ class TestSearchWrapper(unittest.TestCase):
         """
         Smoke test for search_wrapper
         """
-        f = "data/test_data.csv"
+        f = "data/test_data/test_data.csv"
         test_dat = pd.read_csv(f)
         # Assume the search function returns the original data
         mock_select_search.return_value = test_dat
