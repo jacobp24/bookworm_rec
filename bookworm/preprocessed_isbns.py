@@ -12,7 +12,7 @@ ISBN and ratings.
 import pandas as pd
 
 
-complete = pd.read_csv('bookworm/data/complete_data.csv')
+complete = pd.read_csv('data/complete_data.csv')
 
 complete['ISBN'] = complete['ISBN'].astype(str)
 
