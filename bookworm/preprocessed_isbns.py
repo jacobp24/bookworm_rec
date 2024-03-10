@@ -52,11 +52,6 @@ book_rating = pd.read_csv(BOOK_RATINGS_PATH, sep=';', quotechar='"',
 book_rating['ISBN'] = book_rating['ISBN'].astype(str)
 string_length_counts_2 = book_rating['ISBN'].str.len().value_counts()
 
-preprocessed = pd.read_csv('data/Preprocessed_data.csv')
-preprocessed['isbn'] = preprocessed['isbn'].astype(str)
-preprocessed.rename(columns={'isbn': 'ISBN'}, inplace=True)
-string_length_counts_3 = preprocessed['ISBN'].str.len().value_counts()
-
 
 def check_digit_13(isbn):
     """ Checks that ISBN is currently 12 digits, then uses mathematical
