@@ -349,7 +349,8 @@ def genre_search(data_frame, genre, num_books=10):
     """
     Search for books within a specified genre and return the top-rated books.
 
-    This function filters a DataFrame for books that match the specified genre, sorts these books by their rating,
+    This function filters a DataFrame for books that match the specified genre,
+    sorts these books by their rating,
     and returns the specified number of top-rated books within this genre.
 
     Parameters:
@@ -362,9 +363,10 @@ def genre_search(data_frame, genre, num_books=10):
     """
     # Filter books by the specified genre
     filtered_books = data_frame[data_frame['generic_genre'] == genre]
-    
-    # Sort the filtered DataFrame by book rating in descending order and select the top `num_books`
-    top_rated_books = filtered_books.sort_values(by='Book-Rating', ascending=False).head(num_books)
-    
+
+    # Sort the filtered DataFrame by book rating in descending order
+    # and select the top `num_books`
+    top_rated_books =  filtered_books.sort_values(by='Book-Rating',
+                            ascending=False).head(num_books)
+
     return top_rated_books
-    
