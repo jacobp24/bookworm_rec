@@ -39,7 +39,13 @@ SM_DICT = {
 
 SEARCH_MODES = [SM_DICT["Title"], SM_DICT["Author1"], SM_DICT["Plot"],
                 SM_DICT["Genre"], SM_DICT["Author2"]]
-GENRES = ["Science", "Mystery", "Other"]
+GENRES = [
+    "Science Fiction", "Fiction", "Fantasy", "Mystery", "Novel",
+    "Children's Literature", "Other", "Historical", "Thriller",
+    "Young Adult", "Crime", "Horror", "Romance", "Autobiography/Memoir",
+    "Dystopian", "Comedy", "Non-fiction", "Satire", "Biography",
+    "History", "Philosophy", "Science"
+]
 
 # DEFINE EACH UI ELEMENT AS A SEPARATE FUNCTION
 def display_avg_ratings_slider():

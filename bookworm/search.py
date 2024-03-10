@@ -344,3 +344,27 @@ def plot_semantic_search(df, query, num_books = 10):
 
     # Return the DataFrame containing the closest books
     return closest_books
+
+def genre_search(data_frame, genre, num_books=10):
+    """
+    Search for books within a specified genre and return the top-rated books.
+
+    This function filters a DataFrame for books that match the specified genre, sorts these books by their rating,
+    and returns the specified number of top-rated books within this genre.
+
+    Parameters:
+    - data_frame (pandas.DataFrame): The DataFrame containing book data.
+    - genre (str): The genre to filter the books by.
+    - num_books (int, optional): The number of top-rated books to return. Defaults to 10.
+
+    Returns:
+    - pandas.DataFrame: A DataFrame containing the top-rated books within the specified genre.
+    """
+    # Filter books by the specified genre
+    filtered_books = data_frame[data_frame['generic_genre'] == genre]
+    
+    # Sort the filtered DataFrame by book rating in descending order and select the top `num_books`
+    top_rated_books = filtered_books.sort_values(by='Book-Rating', ascending=False).head(num_books)
+    
+    return top_rated_books
+    
