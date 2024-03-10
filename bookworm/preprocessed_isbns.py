@@ -49,8 +49,6 @@ filt_complete = complete[complete['ISBN'].str[:-1].str.isnumeric()]
 BOOK_RATINGS_PATH = '../data/BX-Book-Ratings.csv'
 book_rating = pd.read_csv(BOOK_RATINGS_PATH, sep=';', quotechar='"',
                           encoding='windows-1252')
-book_rating['ISBN'] = book_rating['ISBN'].astype(str)
-string_length_counts_2 = book_rating['ISBN'].str.len().value_counts()
 
 
 def check_digit_13(isbn):
