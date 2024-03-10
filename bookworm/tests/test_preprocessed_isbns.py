@@ -12,8 +12,13 @@ Usage: Uses the unittest framework, run by the command:
 """
 
 import unittest
-from bookworm.preprocessed_isbns import transform_isbn, check_digit_13, \
-                                convert_10_to_13, complete_to_13
+
+try:
+    from preprocessed_isbns import transform_isbn, check_digit_13, \
+                                   convert_10_to_13, complete_to_13
+except ImportError:
+    from bookworm.preprocessed_isbns import transform_isbn, check_digit_13, \
+                                            convert_10_to_13, complete_to_13
 
 
 class TestTransformISBN(unittest.TestCase):
