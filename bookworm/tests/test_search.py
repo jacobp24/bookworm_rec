@@ -36,8 +36,14 @@ test_query_exact(self):
 Test Functions in TestSearch Class
 ======================================    
 
-test_keyword_exact(self):
+test_semantic_search(self):
+    Confirms semantic-search correctly calls get_semantic_results.
+
+test_author_similar(self):
     Confirms that exact match queries return expected match. 
+
+test_plot_semantic(self):
+    Test plot_semantic_search against expected result.
 
 test_author2_search_exact(self):
     Confirm author2_search returs books by that author only; exact match.
@@ -47,9 +53,6 @@ test_author2_search_close(self):
 
 test_author2_search_nomatch(self):
     Confirm error raised if no matching author.
-
-test_plot_semantic(self):
-    Test plot_semantic_search against expected result.
 
 test_genre_one_shot(self):
     Confirm genre search returns expected result.
@@ -90,13 +93,13 @@ class TestHelperFunctions(unittest.TestCase):
         self.test_dat_e = pd.read_csv(f_embed)
         f_ratings = "data/test_data/test_data.csv"
         self.test_dat_r = pd.read_csv(f_ratings)
-        self.test_dat_filled = HelperFunctions.fill_na(self.test_dat_e)
+        self.test_dat_filled = HelperFunctions.fill_na(self.test_dat_r)
 
         unfilled_data = {'author': ['Author1', None, 'Author3'],
                 'book_title': ['Book1', None, 'Book3'],
                 'genre': [None, 'Genre2', 'Genre3'],
                 'summary': ['Summary1', 'Summary2', None]}
-        self.test_dat2 = pd.DataFrame(unfilled_data)
+        self.test_dat_u = pd.DataFrame(unfilled_data)
 
 
     def test_preprocess_text(self):
@@ -133,7 +136,7 @@ class TestHelperFunctions(unittest.TestCase):
         Confirm missing values in a df are correctly filled
         """
 
-        filled_df = HelperFunctions.fill_na(self.test_dat2)
+        filled_df = HelperFunctions.fill_na(self.test_dat_u)
         self.assertEqual(filled_df.isnull().sum().sum(), 0)
         self.assertEqual(filled_df['author'].iloc[1], 'Unknown')
         self.assertEqual(filled_df['book_title'].iloc[1], 'Unknown')
@@ -212,21 +215,62 @@ class TestSearch(unittest.TestCase):
         f_genre = "data/test_data/test_genre.csv"
         self.test_data_g = pd.read_csv(f_genre)
 
+    
 
-    def test_keyword_exact(self):
+    @patch("search.HelperFunctions.get_semantic_results")
+    def test_semantic_search(self, mock_get):
         """
-        Confirms that exact match queries return expected match
+        Confirms semantic-search correctly calls get_semantic_results.
+        """
+
+        query = "Leviticus"
+        f = "data/complete_w_embeddings/"
+        f += "complete_w_embeddings.csv_part_1.csv"
+        df = pd.read_csv(f)
+        mock_get.return_value = [0, 1, 2, 3, 4]
+        results = search.semantic_search(df, query, ["book_title"],
+                                         num_books=5)
+        for i in range(5):
+            self.assertEqual(results.iloc[i]["book_title"], 
+                             df.iloc[i]["book_title"])
+
+
+    def test_author_similar(self):
+        """
+        Confirms that exact match queries return expected match.
         
         Pattern test. In any case where the query string is an exact 
-        match to the title of a book in the datset  
-        we expect the first book returned to be the exact match. 
+        match to the author a book in the datset  
+        we expect one of the top 3 books returned to be by that author.  Note:
+        since keyword search is on all fields, some books returned may be by 
+        other authors but with similar plots etc. For a search that returns 
+        only books by the requested author, use author2 search.   
         """
         for idx in range(2):
-            query = self.test_dat_e["book_title"][idx]
-            books = search.keyword_search(self.test_dat_e, query, num_books=10)
-            results = books.iloc[0]["book_title"]
+            query = self.test_dat_e["author"][idx]
+            books = search.author_similar_search(self.test_dat_e,
+                                                 query, num_books=10)
+            results = books["author"][0:2].tolist()
             expected = query
-            self.assertEqual(results, expected)
+            self.assertIn(expected, results)
+
+
+    def test_plot_semantic(self):
+        """
+        Test plot_semantic_search against expected result.
+        
+        One shot test. Using test data and a query that briefly 
+        describes the plot of testbook_id 18560, "Leaf by Niggle", ensure 
+        this book is returned as the top result."
+
+        """
+        query = "A man paints a tree."
+        books = search.plot_semantic_search(self.test_dat_e,
+                                            query, num_books=10)
+        results = books.iloc[0]["book_id"]
+        expected = self.test_dat_e.iloc[7]["book_id"] # 7=idx for Leaf by Niggle
+        self.assertEqual(results, expected)
+
 
 
     def test_author2_search_exact(self):
@@ -267,39 +311,6 @@ class TestSearch(unittest.TestCase):
         query = "gribnif blah blah blah"
         with self.assertRaises(ValueError):
             search.author2_search(self.test_dat_r, query, num_books=10)
-
-    def test_plot_semantic(self):
-        """
-        Test plot_semantic_search against expected result.
-        
-        One shot test. Using test data and a query that briefly 
-        describes the testbook_id 18560, "Leaf by Niggle", ensure 
-        this book is returned as the top result."
-
-        """
-        query = "A man paints a tree."
-        books = search.plot_semantic_search(self.test_dat_e, query, num_books=10)
-        results = books.iloc[0]["book_id"]
-        expected = self.test_dat_e.iloc[7]["book_id"] # 7 = idx for Leaf by Niggle
-        # print(self.test_dat[self.test_dat["book_id"] == 18560])
-        self.assertEqual(results, expected)
-
-    # def test_semantic(self):
-    #     """
-    #     Test semantic_search against expected result.
-
-    #     Using test data and a query that briefly describes the test
-    #     book_id 18560, "Leaf by Niggle", ensure this book is returned
-    #     as the top result."
-    #     """
-    #     query = " Leaf by Niggle"
-    #     columns = ["book_title"]
-    #     with patch('search.indices', test_indices):  # TO DO: MAKE THESE
-    #     books = search.semantic_search(self.test_dat, query, columns, num_books=10)
-    #     books = search.semantic_search(self.test_dat, query, columns, num_books=10)
-    #     results = books.iloc[0]["book_id"]
-    #     expected = self.test_dat.iloc[7]["book_id"] # 7 = idx for Leaf by Niggle
-    #     self.assertEqual(results, expected)
 
     def test_genre_one_shot(self):
         """ 

@@ -36,10 +36,10 @@ test_select_search_title(self, mock_semantic_search):
 test_select_search_plot(self, mock_plot_semantic_search):
     Confirm correct search function called for search_mode plot
 
-test_select_search_author1(self, mock_plot_keyword_search):
-    Confirm correct search function called for search_mode author1
+test_select_search_author1(self, mock_author_similar_search):
+    Confirm correct search function called for search_mode Author1
 
-test_select_search_genre(self, mock_plot_keyword_search):
+test_select_search_genre(self, mock_plot_genre_search):
     Confirm correct search function called for search_mode Genre
 
 Tests in Class TestAssembleData
@@ -177,17 +177,15 @@ class TestSelectSearch(unittest.TestCase):
                                                "J. R. Tolkien")
         self.assertEqual(results, "Plot search performed")
 
-    # @mock.patch("search.keyword_search")
-    # def test_select_search_author1(self, mock_keyword_search):
-    #     """
-    #     Confirm correct search function called for search_mode Author1
-    #     """
-    #     f = "data/test_data.csv"
-    #     test_dat = pd.read_csv(f)
-    #     mock_keyword_search.return_value = "Keyword search performed"
-    #     results = search_wrapper.select_search(test_dat, "Author1",
-    #                                            "J. R. Tolkien")
-    #     self.assertEqual(results, "Keyword search performed")
+    @mock.patch("search.author_similar_search")
+    def test_select_search_author1(self, mock_author_similar_search):
+        """
+        Confirm correct search function called for search_mode Author1
+        """
+        mock_author_similar_search.return_value = "Author1 search performed"
+        results = search_wrapper.select_search("Author1",
+                                               "J. R. Tolkien")
+        self.assertEqual(results, "Author1 search performed")
 
     @mock.patch("search.genre_search")
     def test_select_search_genre(self, mock_keyword_search):
