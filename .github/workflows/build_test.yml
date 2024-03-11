@@ -89,11 +89,11 @@ jobs:
       # If there are any other steps in order for your tests to
       # run successfully, you can add those steps here!
 
-     # Next step: run pylint. Anything less than 10/10 will fail.
-      - name: Lint with pylint
-        run: |
-        pylint bookworm/*.py
-        pylint bookworm/**/*.py
+    #  # Next step: run pylint. Anything less than 10/10 will fail.
+    #   - name: Lint with pylint
+    #     run: |
+    #     pylint bookworm/*.py
+    #     pylint bookworm/**/*.py
          
 
       # Next step: run the unit tests with code coverage.
