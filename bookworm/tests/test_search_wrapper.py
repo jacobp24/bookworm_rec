@@ -5,8 +5,8 @@ Module: test_search_wrapper
 This module contains unit tests for the search and filter functions
 implemented in the search_warpper.py module. 
 
-The tests are organized into four Test Classes each corresponding to a
-function in the search modules to be tested. 
+The tests are organized into four Test Classes each corresponding to the
+functions in search modules to be tested. 
 
 Tests in Class TestFilter
 ==========================
@@ -83,12 +83,11 @@ class TestFilter(unittest.TestCase):
         """ 
         Creates and loads testing data. 
         """
-        try:
-            f = "data/test_data/test_data_w_embeddings.csv"
-            self.test_dat = pd.read_csv(f)
-        except ImportError:
-            f = "bookworm/data/test_data/test_data_w_embeddings.csv"
-            self.test_dat = pd.read_csv(f)
+        f_embed = "data/test_data/test_data_w_embeddings.csv"
+        self.test_dat_e = pd.read_csv(f_embed)
+        f_ratings = "data/test_data/test_data.csv"
+        self.test_dat_r = pd.read_csv(f_ratings)
+
 
     def test_filter_min_ave_ratings(self):
         """ 
@@ -97,9 +96,9 @@ class TestFilter(unittest.TestCase):
         Using test data as input and setting average ratings filter to
         6 should result in 2 entries remaining after filtering. 
         """
-        test_dat = self.test_dat
-        results = search_wrapper.filter_ratings(test_dat, 6, 0)
-        self.assertEqual(results.shape[0], 2)
+        for test_dat in  [self.test_dat_e, self.test_dat_r]:
+            results = search_wrapper.filter_ratings(test_dat, 6, 0)
+            self.assertEqual(results.shape[0], 2)
 
     def test_filter_min_num_ratings(self):
         """ 
@@ -108,9 +107,9 @@ class TestFilter(unittest.TestCase):
         Using test dat as input and setting number of ratings filter 
         to 6 should result in 1 entry remaining after filtering. 
         """
-        test_dat = self.test_dat
-        results = search_wrapper.filter_ratings(test_dat, 0, 6)
-        self.assertEqual(results.shape[0], 1)
+        for test_dat in  [self.test_dat_e, self.test_dat_r]:
+            results = search_wrapper.filter_ratings(test_dat, 0, 6)
+            self.assertEqual(results.shape[0], 1)
 
     def test_filter_no_mins(self):
         """ 
@@ -120,9 +119,9 @@ class TestFilter(unittest.TestCase):
         filter to zero should return data in same shape as original
         data.
         """
-        test_dat = self.test_dat
-        results = search_wrapper.filter_ratings(test_dat, 0, 0)
-        self.assertEqual(results.shape[0], test_dat.shape[0])
+        for test_dat in  [self.test_dat_e, self.test_dat_r]:
+            results = search_wrapper.filter_ratings(test_dat, 0, 0)
+            self.assertEqual(results.shape[0], test_dat.shape[0])
 
     def test_filter_missing_col1(self):
         """
@@ -147,27 +146,14 @@ class TestFilter(unittest.TestCase):
 class TestSelectSearch(unittest.TestCase):
     """Test cases for the filter_ratings function"""
 
-
-    def setUp(self):
-        """ 
-        Creates and loads testing data. 
-        """
-        try:
-            f = "data/test_data/test_data_w_embeddings.csv"
-            self.test_dat = pd.read_csv(f)
-        except ImportError:
-            f = "bookworm/data/test_data/test_data_w_embeddings.csv"
-            self.test_dat = pd.read_csv(f)
-
-
     @mock.patch("search.author2_search")
     def test_select_search_author2(self, mock_author2_search):
         """
         Confirm correct search function called for search_mode Author2
         """
-        test_dat = self.test_dat
+
         mock_author2_search.return_value = "Author2 search performed"
-        results = search_wrapper.select_search(test_dat, "Author2",
+        results = search_wrapper.select_search("Author2",
                                                "J. R. Tolkien")
         self.assertEqual(results, "Author2 search performed")
 
@@ -176,9 +162,8 @@ class TestSelectSearch(unittest.TestCase):
         """
         Confirm correct search function called for search_mode Title
         """
-        test_dat = self.test_dat
         mock_semantic_search.return_value = "Semantic search performed"
-        results = search_wrapper.select_search(test_dat, "Title",
+        results = search_wrapper.select_search("Title",
                                                "Wolves of the Calla")
         self.assertEqual(results, "Semantic search performed")
 
@@ -187,9 +172,8 @@ class TestSelectSearch(unittest.TestCase):
         """
         Confirm correct search function called for search_mode Plot
         """
-        test_dat = self.test_dat
         mock_plot_semantic_search.return_value = "Plot search performed"
-        results = search_wrapper.select_search(test_dat, "Plot",
+        results = search_wrapper.select_search("Plot",
                                                "J. R. Tolkien")
         self.assertEqual(results, "Plot search performed")
 
@@ -210,9 +194,8 @@ class TestSelectSearch(unittest.TestCase):
         """
         Confirm correct search function called for search_mode genre
         """
-        test_dat = self.test_dat
         mock_keyword_search.return_value = "Genre search performed"
-        results = search_wrapper.select_search(test_dat, "Genre",
+        results = search_wrapper.select_search("Genre",
                                                "J. R. Tolkien")
         self.assertEqual(results, "Genre search performed")
 

@@ -30,10 +30,16 @@ from unittest.mock import patch
 
 import pandas as pd
 
-
-from app import main, display_avg_ratings_slider, display_num_ratings_slider, \
-                display_search_mode_ui, display_search_value_ui, \
-                display_genre_dropdown, display_search_button, execute_query
+try:
+    from app import (main, display_avg_ratings_slider,
+                     display_num_ratings_slider, display_search_mode_ui,
+                     display_search_value_ui, display_genre_dropdown,
+                     display_search_button)
+except ImportError:
+    from bookworm.app import (main, display_avg_ratings_slider,
+                     display_num_ratings_slider, display_search_mode_ui,
+                     display_search_value_ui, display_genre_dropdown,
+                     display_search_button)
 
 
 class TestStreamlitUI(unittest.TestCase):
@@ -103,13 +109,13 @@ class TestStreamlitUI(unittest.TestCase):
             result = display_search_button()
             self.assertTrue(result)
 
-    def test_execute_query(self):
-        """Test execute_query function."""
-        with patch('streamlit.write') as mock_write:
-            execute_query("Title", "The Great Gatsby", 8.0, 20)
-            mock_write.assert_called_once_with(
-                "Searching for books using Title, value: The Great Gatsby, "
-                "min average rating: 8.0, min number of ratings: 20")
+    # def test_execute_query(self):
+    #     """Test execute_query function."""
+    #     with patch('streamlit.write') as mock_write:
+    #         execute_query("Title", "The Great Gatsby", 8.0, 20)
+    #         mock_write.assert_called_once_with(
+    #             "Searching for books using Title, value: The Great Gatsby, "
+    #             "min average rating: 8.0, min number of ratings: 20")
 
 
 if __name__ == '__main__':
