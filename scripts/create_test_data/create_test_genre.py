@@ -1,7 +1,7 @@
 """
 Script to create smaller test version of genres data. 
 
-Module should be run from /scripts folder. 
+Script hould be run from /scripts folder. 
 
 """
 
