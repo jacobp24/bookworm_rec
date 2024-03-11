@@ -30,10 +30,16 @@ from unittest.mock import patch
 
 import pandas as pd
 
-
-from app import main, display_avg_ratings_slider, display_num_ratings_slider, \
-                display_search_mode_ui, display_search_value_ui, \
-                display_genre_dropdown, display_search_button
+try:
+    from app import (main, display_avg_ratings_slider,
+                     display_num_ratings_slider, display_search_mode_ui,
+                     display_search_value_ui, display_genre_dropdown,
+                     display_search_button)
+except ImportError:
+    from bookworm.app import (main, display_avg_ratings_slider,
+                     display_num_ratings_slider, display_search_mode_ui,
+                     display_search_value_ui, display_genre_dropdown,
+                     display_search_button)
 
 
 class TestStreamlitUI(unittest.TestCase):
