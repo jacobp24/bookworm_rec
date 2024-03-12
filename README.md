@@ -56,7 +56,7 @@ Includes:
 
 This repository can be cloned onto your local computer by running the following command in a terminal:
 ```bash
-$ cp `git clone https://github.com/jacobp24/bookworm_rec.git`
+`git clone https://github.com/jacobp24/bookworm_rec.git`
 ```
 
 If git is not already downloaded, use the [Git Guide](https://github.com/git-guides/install-git) and then clone the repository.
@@ -67,8 +67,62 @@ For this repository we have set up a environment that can be ran locally and ins
 appropriate version requirements. Conda needs to be installed before running the next commands. 
 Refer to [Conda Installation](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) for further instructions.
 
+Now run the next command to create the `bookworm_env` Conda environment:
+
+```bash
+`conda env create -f env.yml`
+```
+Make sure to activate the newly created environment:
+```bash
+`conda activate bookworm_env`
+```
+Once done with the environment (after using the tool), deactivate it by running:
+```bash
+`conda deactivate`
+```
+
+### Application
+
+Our application runs with the Streamlit Python library. Before jumping onto the webpage,
+you will need to do the following steps:
+
+In order to generate the recommendation embeddings we utilized the [VoyageAI](https://www.voyageai.com/) package.
+
+Please create a local API KEY by following these steps:
+
+1. Click [Here](https://dash.voyageai.com/) to create your own API KEY.
+
+2. Copy your new API key and run this command:
+```bash
+`export API_KEY="replace-with-your-api-key"`
+```
+This command is space specific i.e. there cannot be spaces before and after the equals. Make sure your new API KEY
+is in doubles quotes!
+
+3. To check that the API KEY was created successfully:
+```bash
+`echo $API_KEY`
+```
+
+4. Make sure your current directory is set the 'bookworm' folder. If it is not please run from within the `bookworm_rec` directory:
+```bash
+`cd bookworm`
+```
+
+5. Okay now we are ready to run the application!
+```bash
+`streamlit run app.py`
+```
+Go check out our application in your local browser!!!
 
 
+### Examples
+
+Here is a [video demonstration]() of our app!
+
+OR
+
+A walkthrough of application can be found in the [examples folder](examples/README.md)
 
 
 
