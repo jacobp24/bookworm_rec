@@ -28,6 +28,12 @@ this may return less than 10 results.
 
 ![Author-2](walkthrough_images/walkthrough_image2.jpg)
 
+User's don't have to worry if they don't remember exactly how to spell the author's name. Most 
+typos and misspellings won't trick the tool.  And if we are unsure which author you mean, we'll 
+try to provie suggestions and get clarification. 
+
+![Author-Misspell](walkthrough_images/walkthrough_image7.jpg)
+
 ## Book Suggestions by Personal Interests
 
 Users can also input a description of a book they enjoyed and our model will give them books similar to the inputed book.
@@ -35,9 +41,9 @@ Users can also input a description of a book they enjoyed and our model will giv
 Click on the "Books similar to my favorite plot" option, and search away!
     (Please be patient, it is doing work behind the scenes!)
 
-For example: If you loved the Hunger Games you may write "girl enters arena for a fight to the death"
+For example: You could search for "dectives solve murders from long ago"
 
-![Plot1](walkthrough_images/walkthrough_image3.jpg)
+![Plot1](walkthrough_images/walkthrough_image6.jpg)
 
 ### But what if I don't know the plot??
 
