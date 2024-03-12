@@ -56,8 +56,9 @@ Includes:
 
 This repository can be cloned onto your local computer by running the following command in a terminal:
 
-'''bash
+'''
 git clone https://github.com/jacobp24/bookworm_rec.git
+
 
 If git is not already downloaded, use the [Git Guide](https://github.com/git-guides/install-git) and then clone the repository.
 
