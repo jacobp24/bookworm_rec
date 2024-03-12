@@ -46,7 +46,7 @@ Includes:
 3. BookSummaries.txt
     - 16,559 values
     - Fields: Wikipedia article ID, Freebase ID, Book Title, Author, Publication Date, Book Genres, Plot Summary
-    - The data from BookSummaries.txt was extracted into the file [data_raw/complete_data.csv]()
+    - The data from BookSummaries.txt was extracted into the file [data_raw/complete_data.csv](data_raw/complete_data.csv)
 
 ### ISBN Matching
 [Google Books API](https://developers.google.com/books/)
