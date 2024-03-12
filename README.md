@@ -34,21 +34,30 @@ Includes:
 1.  BX-Book-Ratings.csv 
     - 1149779 values
     - Fields: User ID, ISBN, Book Rating
+    - A copy of this data is in [data_raw/BX-Book_Ratings.csv](data_raw/BX-Book-Ratings.csv)
 2.  BX-Books.csv 
     - 271379 unique values
-    - Fields: ISBN, Book-Title, Book-Author, Year-Of-Publication, Publisher, Image-URL-S, Image-URL-M, Image-URL-L
+    - Fields: ISBN, Book-Title, Book-Author, Year-Of-Publication, Publisher, Image-URL-S, Image-URL-M, Image-URL-Lnot
+    - Due to file size, this file was **not** included in the repo, but can be obtained from the link above.  
 
 ### Plot Summaries
 [Kaggle CMU Book Summary](https://www.kaggle.com/datasets/ymaricar/cmu-book-summary-dataset?resource=download) 
+
 3. BookSummaries.txt
     - 16,559 values
     - Fields: Wikipedia article ID, Freebase ID, Book Title, Author, Publication Date, Book Genres, Plot Summary
+    - The data from BookSummaries.txt was extracted into the file [data_raw/complete_data.csv](data_raw/complete_data.csv)
 
 ### ISBN Matching
 [Google Books API](https://developers.google.com/books/)
+
 4. Google Books API
     - ISBN (13 digit)
     - Book Title
+    - This API was used to augment CMU data with ISBN Numbers to help for matching with Book Ratings dataset
+    - ISBN numbers obtained via Google APIs also included in [data_raw/complete_data.csv](data_raw/complete_data.csv)
+  
+A description of data cleaning, joining and preprocessing can be found [Here](bookworm/data/Data_Processing_Slides.pdf)
 
 ## Local Setup and Environment
 

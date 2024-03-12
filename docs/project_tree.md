@@ -1,0 +1,66 @@
+- LICENSE
+- README.md
+- bookworm
+    - __init__.py
+    - app.py
+    - data
+        - complete_data.csv
+        - complete_w_embeddings
+            - complete_w_embeddings.csv_part_1.csv
+            - complete_w_embeddings.csv_part_2.csv
+            - complete_w_embeddings.csv_part_3.csv
+            - complete_w_embeddings.csv_part_4.csv
+        - complete_w_ratings.csv
+        - distances_updated.npy
+        - genre.csv
+        - indices_updated.npy
+        - test_data
+            - distances_test.csv
+            - distances_test.npy
+            - indices_test.csv
+            - indices_test.npy
+            - test_data.csv
+            - test_data2.csv
+            - test_data3.csv
+            - test_data4.csv
+            - test_data_w_embeddings.csv
+            - test_genre.csv
+    - images
+        - books_banner.png
+        - butterfly.png
+    - preprocessed_isbns.py
+    - search.py
+    - search_wrapper.py
+    - styles.css
+    - tests
+        - __init__.py
+        - test_app.py
+        - test_preprocessed_isbns.py
+        - test_search.py
+        - test_search_wrapper.py
+- data_raw
+    - BX-Book-Ratings.csv
+    - complete_data.csv
+- docs
+    - Component_Specifications.html
+    - Component_Specifications.md
+    - Functional_Specifications.md
+    - Milestones.md
+    - TechReview.pdf
+    - TechReview.pptx
+    - project_tree.md
+    - streamlitdemo2.mp4
+    - usecase.md
+    - userstory.md
+- env.yml
+- pyproject.toml
+- requirements.txt
+- scripts
+    - Embeddings.py
+    - Semantic Scores.py
+    - __init__.py
+    - create_test_data
+        - __init__.py
+        - create_test_genre.py
+        - embeddings_test_data.py
+        - semantic_scores_test_data.py
