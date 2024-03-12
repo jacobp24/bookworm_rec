@@ -265,7 +265,10 @@ def author2_search(df, query, num_books=10):
         if not suggestions:
             err_msg += " Perhaps you can try plot search."
         else:
-            err_msg += f" Perhaps you meant one of these authors? {suggestions}"
+            err_msg += " Perhaps you meant one of these authors: "
+            for suggestion in suggestions:
+                err_msg += f"{suggestion}, "
+                err_msg = err_msg[:-2] + "?"
 
         raise ValueError(err_msg)
 
@@ -324,10 +327,12 @@ def genre_search(data_frame, genre, num_books=10):
     Parameters:
     - data_frame (pandas.DataFrame): The DataFrame containing book data.
     - genre (str): The genre to filter the books by.
-    - num_books (int, optional): The number of top-rated books to return. Defaults to 10.
+    - num_books (int, optional): The number of top-rated books to return. 
+        Defaults to 10.
 
     Returns:
-    - pandas.DataFrame: A DataFrame containing the top-rated books within the specified genre.
+    - pandas.DataFrame: A DataFrame containing the top-rated books within the 
+        specified genre.
     """
     # Filter books by the specified genre
     filtered_books = data_frame[data_frame['generic_genre'] == genre]

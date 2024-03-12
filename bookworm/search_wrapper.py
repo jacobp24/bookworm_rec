@@ -133,6 +133,7 @@ def select_search(search_mode, search_value, num_books=10):
                 combined_df = pd.concat([combined_df, results1.iloc[[i]]])
             if i < results2.shape[0]:
                 combined_df = pd.concat([combined_df, results2.iloc[[i]]])
+        combined_df = combined_df.drop_duplicates(subset=['book_title'])
         combined_df.reset_index(drop=True, inplace=True)
         results = combined_df
 
