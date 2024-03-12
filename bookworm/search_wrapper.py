@@ -137,9 +137,9 @@ def select_search(search_mode, search_value, num_books=10):
         results = search.genre_search(genre_df, search_value,
                                       num_books=max(num_books * 2, 20))
 
-    else:  # Default to keyword search on all columns for other modes
+    else:  # Author + Similar author search
         df = pd.read_csv("data/complete_w_ratings.csv")
-        results = search.keyword_search(df, search_value,
+        results = search.author_similar_search(df, search_value,
                                         num_books=max(num_books * 2, 20))
 
     return results

@@ -176,7 +176,7 @@ class TestHelperFunctions(unittest.TestCase):
         """
         mock_fill_na.return_value = self.test_dat_filled
         columns = ["book_title"]
-        HelperFunctions.query_to_index(self.test_dat_e, "dog", columns)
+        HelperFunctions.query_to_index(self.test_dat_e, "Leviticus", columns)
         mock_fill_na.assert_called_once_with(self.test_dat_e)
 
 
@@ -215,7 +215,6 @@ class TestSearch(unittest.TestCase):
         f_genre = "data/test_data/test_genre.csv"
         self.test_data_g = pd.read_csv(f_genre)
 
-    
 
     @patch("search.HelperFunctions.get_semantic_results")
     def test_semantic_search(self, mock_get):
@@ -231,7 +230,7 @@ class TestSearch(unittest.TestCase):
         results = search.semantic_search(df, query, ["book_title"],
                                          num_books=5)
         for i in range(5):
-            self.assertEqual(results.iloc[i]["book_title"], 
+            self.assertEqual(results.iloc[i]["book_title"],
                              df.iloc[i]["book_title"])
 
 

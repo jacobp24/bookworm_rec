@@ -28,8 +28,8 @@ query_to_index
 Search Mode Functions
 =====================
 
-keyword_search(df, query, num_books=10):
-    Search for closest set of books  via keyword search.
+author_similar_search(df, query, num_books=10):
+    Search for closest set of books via keyword search.
 
 semantic_search(df, query, num_books=10):
     Search for the closest books via keyword + semantic search. 
@@ -146,7 +146,7 @@ class HelperFunctions:
         return similar_books_indices
 
     @staticmethod
-    def query_to_index(df, query, columns, vectorizer=None, num_idx=1):
+    def query_to_index(df, query, columns, vectorizer=None):
         """ 
         Maps query to the closest book index via keyword search.
         
@@ -163,10 +163,9 @@ class HelperFunctions:
             query:      A string.  
 
             columns:    The columns to search over for the keyword search.
-
-            num_idx:    Int. The number of indices to return.  Default is 1. 
+ 
         Returns: 
-            A numpy array of length num_idx.
+            An np.int; the index of the closest book. 
     """
 
         df = HelperFunctions.fill_na(df)
@@ -185,14 +184,20 @@ class HelperFunctions:
         query_vec = vectorizer.transform([query])
         cosine_similarities = linear_kernel(query_vec,
                 vectorizer.transform(df['combined_text'])).flatten()
-        if num_idx == 1:
-            most_relevant_index = cosine_similarities.argsort()[-1]
-            return most_relevant_index
-        most_relevant_indices = cosine_similarities.argsort()[-num_idx:][::-1]
-        return most_relevant_indices
+        most_relevant_index = cosine_similarities.argsort()[-1]
+        best_distance = cosine_similarities[most_relevant_index]
+        best_book = df.iloc[most_relevant_index]["book_title"]
+        if best_distance < 0.75:
+            err_msg = "Sorry, we can't find that book in our database."
+            # Offer suggestion if the best match had .5 < distance < .75
+            if best_distance > 0.5:
+                err_msg += f" Did you perhaps mean {best_book}?"
+            err_msg += " You can also try searching by author or plot."
+            raise ValueError(err_msg)
 
+        return most_relevant_index
 
-def keyword_search(df, query, num_books=10):
+def author_similar_search(df, query, num_books=10):
     """ 
     Search for closest set of books via keyword search.
     
