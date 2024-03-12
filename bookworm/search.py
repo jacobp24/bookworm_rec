@@ -2,15 +2,17 @@
 Module with search functions accross several modalities.
 
 Includes helper functions as well as several search modes: 
-    (1) keyword search - based on TfidfVectorizer
-    (2) semantic search - hybird TfidfVectorizer/Voyeageai search
-    (3) plot_semantic search based on voyageai semantic search
-    (4) author2 search - fuzzy matching to author field 
+    (1) semantic search - hybird keyword (TfidfVectorizer) and
+        semantic (Voyeageai) search. Used for Author1 and Book_Title 
+        search.
+    (2) plot_semantic search based on voyageai semantic search
+    (3) author2 search - fuzzy matching to author field 
+    (4) genre search - exact matching to standardized genre field
 
 Functions in TestHelperFunctions Class
 ==================================
-parse_genres(genre_str)
-    Parse genre dictionaries into keywords joined by commas
+parse_genres(genre_dict)
+    Parse genre dictionaries into keywords joined by commas.
 
 fill_na(df)
     Fill in missing values in dataframe with "unknown" or similar.
@@ -18,20 +20,17 @@ fill_na(df)
 preprocess_text(text)
     Convert text to all lowercase.
 
-get_semantic_results
+get_semantic_results(df, query, columns, num_books=10)
     Extracts the indices of the closest books to given book_index.
 
-query_to_index
+query_to_index(df, query, columns, vectorizer=None)
     Maps query to the closest book index via keyword search.
 
 
 Search Mode Functions
 =====================
 
-keyword_search(df, query, num_books=10):
-    Search for closest set of books  via keyword search.
-
-semantic_search(df, query, num_books=10):
+semantic_search(df, query, columns, num_books=10):
     Search for the closest books via keyword + semantic search. 
 
 plot_semantic_search(df, query, num_books = 10):
@@ -39,6 +38,9 @@ plot_semantic_search(df, query, num_books = 10):
     
 author2_search(df, query, num_books=10):
     Search for closest set of books via fuzzy match on author field.
+
+genre_search(data_frame, genre, num_books=10):
+    Search for books within a specified genre and return the top-rated books.
 """
 
 import os
@@ -76,9 +78,9 @@ class HelperFunctions:
     """
 
     @staticmethod
-    def parse_genres(genre_str):
+    def parse_genres(genre_dict):
         """ 
-        Parse genre dictionaries into keywords joined by commas
+        Parse genre dictionaries into keywords joined by commas.
         
         Paramters:
             Genres: A dictinonary of genres.
@@ -88,7 +90,7 @@ class HelperFunctions:
         """
 
         try:
-            genres_dict = ast.literal_eval(genre_str)
+            genres_dict = ast.literal_eval(genre_dict)
             genres_text = ', '.join(genres_dict.values())
         except (ValueError, SyntaxError):
             genres_text = 'Unknown Genre'
@@ -128,7 +130,7 @@ class HelperFunctions:
     @staticmethod
     def get_semantic_results(book_index, num_books=10):
         """
-        Extracts the indices of the closest books to given book_index.
+        Extracts indices of the closest books to given book_index.
         
         Indices extracted from global variable indices. Indices
         variables assumed to reflect closest books based on
@@ -146,14 +148,15 @@ class HelperFunctions:
         return similar_books_indices
 
     @staticmethod
-    def query_to_index(df, query, columns, vectorizer=None, num_idx=1):
+    def query_to_index(df, query, columns, vectorizer=None):
         """ 
         Maps query to the closest book index via keyword search.
         
-        Maps query based to the closest book in dataframe (df) 
+        Maps query to the closest book in dataframe (df) 
         based on keyword search using given vectorizer(default
         is TfidfVectorizer). Then returns the index of that book
-        in the dataframe.  
+        in the dataframe.  Raises exception if no close match
+        (consine similarity > .75).
 
         Parameters: 
             df:         A pandas dataframe, each row representing a book. 
@@ -164,9 +167,12 @@ class HelperFunctions:
 
             columns:    The columns to search over for the keyword search.
 
-            num_idx:    Int. The number of indices to return.  Default is 1. 
+            vectorizer: Vectorizer to use to convert query for keyword search.
+                        If none supplied TfidfVectorizer used. 
         Returns: 
-            A numpy array of length num_idx.
+            An np.int; the index of the closest book. 
+        Exceptions:
+            If no match (> .75 cosine similarity) raise ValueError.  
     """
 
         df = HelperFunctions.fill_na(df)
@@ -185,49 +191,18 @@ class HelperFunctions:
         query_vec = vectorizer.transform([query])
         cosine_similarities = linear_kernel(query_vec,
                 vectorizer.transform(df['combined_text'])).flatten()
-        if num_idx == 1:
-            most_relevant_index = cosine_similarities.argsort()[-1]
-            return most_relevant_index
-        most_relevant_indices = cosine_similarities.argsort()[-num_idx:][::-1]
-        return most_relevant_indices
+        most_relevant_index = cosine_similarities.argsort()[-1]
+        best_distance = cosine_similarities[most_relevant_index]
+        best_match = df.iloc[most_relevant_index][columns[0]]
+        if best_distance < 0.75:
+            err_msg = f"Sorry, we can't find that {columns[0]} in our database."
+            # Offer suggestion if the best match had .5 < distance < .75
+            if best_distance > 0.5:
+                err_msg += f" Did you perhaps mean {best_match}?"
+            err_msg += " You can also try searching by plot."
+            raise ValueError(err_msg)
+        return most_relevant_index
 
-
-def keyword_search(df, query, num_books=10):
-    """ 
-    Search for closest set of books via keyword search.
-    
-    Maps query to the closest books based on keyword search, 
-    using TfidVectorizer and English stopwords. Searches over all
-    columns of text. 
-
-     Parameters: 
-        df:         A pandas dataframe, each row representing a book. 
-                    Assumes df contains columns "book-title", "author",
-                    "genre", and "summary." 
-
-        query:      A string.  
-
-        num_books:  Int. The number of books to extract. 
-                    Defualt is 10.
-    Returns: 
-        A dataframe containing the selected books. 
-    """
-    df = HelperFunctions.fill_na(df)
-    df['genre'] = df['genre'].apply(HelperFunctions.parse_genres)
-    df['combined_text'] = df.apply(lambda x: HelperFunctions.preprocess_text(
-        f"{x['book_title']} {x['author']} {(x['genre'])} {x['summary']}"), 
-        axis=1)
-    query = HelperFunctions.preprocess_text(query)
-    vectorizer = TfidfVectorizer(stop_words='english')
-    tfidf_matrix = vectorizer.fit_transform(df['combined_text'])
-    query_vec = vectorizer.transform([query])
-    cosine_similarities = linear_kernel(query_vec, tfidf_matrix).flatten()
-    top_book_indices = cosine_similarities.argsort()[-num_books:][::-1]
-
-    keyword_results = df.iloc[top_book_indices]
-    keyword_indices = keyword_results.index.tolist()
-    results = df.loc[keyword_indices].head(num_books)
-    return results
 
 def semantic_search(df, query, columns, num_books=10):
     """ 
@@ -244,7 +219,7 @@ def semantic_search(df, query, columns, num_books=10):
 
         query:      A string.  
 
-        columns:    THe columns to search over during keyword search.
+        columns:    The columns to search over during keyword search.
 
         num_books:  Int. The number of indices to extract. 
                     Defualt is 10.
@@ -260,50 +235,6 @@ def semantic_search(df, query, columns, num_books=10):
     results = df.loc[semantic_indices].head(num_books)
     return results
 
-def author2_search(df, query, num_books=10):
-
-    """
-    Search for closest set of books via fuzzy match on author field.
-
-    Parameters: 
-        df:     A pandas dataframe, each row representing a book. 
-                Assumes df contains column "author".
-        query:  A string.  
-
-        num_books:  Int. The number of books to extract. 
-                    Defualt is 10.
-    Returns: 
-        A dataframe containing the selected books. 
-    """
-    #calculate match ratio
-    df['ratio'] = df.apply(lambda row: fuzz.ratio(row['author'], query), axis=1)
-    df_sorted = df.sort_values(by = "ratio",
-                               ascending = False).reset_index(drop=True)
-
-
-    # filter the database to only those rows with match > ratio
-    result = df_sorted[df_sorted["ratio"] > 75]
-    if result.empty:
-        # Offer suggestions if there are matches with 50 < ratio < 75
-        suggestions = []
-        for idx in range(3):
-            if df_sorted.iloc[idx]["ratio"] > 50:
-                auth = df_sorted.iloc[idx]["author"]
-                if not auth in suggestions:
-                    suggestions.append(auth)
-
-        err_msg = "That author does not appear in our database."
-        if not suggestions:
-            err_msg += " Perhaps you can try plot search."
-        else:
-            err_msg += f" Perhaps you meant one of these authors? {suggestions}"
-
-        raise ValueError(err_msg)
-
-    results_sorted = result.sort_values(by='Book-Rating', ascending=False)
-    results = results_sorted.head(num_books)
-    return results
-
 def plot_semantic_search(df, query, num_books = 10):
     """
     Search for closest set of books via pure semantic search.
@@ -315,7 +246,7 @@ def plot_semantic_search(df, query, num_books = 10):
 
     Parameters: 
         df:     A pandas dataframe, each row representing a book. 
-                Assumes df contains column "author".
+                
         query:  A string.  
 
         num_books:  Int. The number of books to extract. 
@@ -344,6 +275,57 @@ def plot_semantic_search(df, query, num_books = 10):
     # Return the DataFrame containing the closest books
     return closest_books
 
+def author2_search(df, query, num_books=10):
+
+    """
+    Search for closest set of books via fuzzy match on author field.
+
+    Parameters: 
+        df:     A pandas dataframe, each row representing a book. 
+                Assumes df contains column "author".
+
+        query:  A string. Value to serach for. 
+
+        num_books:  Int. The number of books to extract. 
+                    Defualt is 10.
+    Returns: 
+        A dataframe containing the selected books. 
+
+    Exceptions:
+        If no match on author field >.75, raise ValueError.      
+    """
+    #calculate match ratio
+    df['ratio'] = df.apply(lambda row: fuzz.ratio(row['author'], query), axis=1)
+    df_sorted = df.sort_values(by = "ratio",
+                               ascending = False).reset_index(drop=True)
+
+
+    # filter the database to only those rows with match > ratio
+    result = df_sorted[df_sorted["ratio"] > 75]
+    if result.empty:
+        # Offer suggestions if there are matches with 50 < ratio < 75
+        suggestions = []
+        for idx in range(3):
+            if df_sorted.iloc[idx]["ratio"] > 50:
+                auth = df_sorted.iloc[idx]["author"]
+                if not auth in suggestions:
+                    suggestions.append(auth)
+
+        err_msg = "That author does not appear in our database."
+        if not suggestions:
+            err_msg += " Perhaps you can try plot search."
+        else:
+            err_msg += " Perhaps you meant one of these authors: "
+            for suggestion in suggestions:
+                err_msg += f"{suggestion}, "
+                err_msg = err_msg[:-2] + "?"
+
+        raise ValueError(err_msg)
+
+    results_sorted = result.sort_values(by='Book-Rating', ascending=False)
+    results = results_sorted.head(num_books)
+    return results
+
 def genre_search(data_frame, genre, num_books=10):
     """
     Search for books within a specified genre and return the top-rated books.
@@ -355,13 +337,16 @@ def genre_search(data_frame, genre, num_books=10):
     Parameters:
     - data_frame (pandas.DataFrame): The DataFrame containing book data.
     - genre (str): The genre to filter the books by.
-    - num_books (int, optional): The number of top-rated books to return. Defaults to 10.
+    - num_books (int, optional): The number of top-rated books to return. 
+        Defaults to 10.
 
     Returns:
-    - pandas.DataFrame: A DataFrame containing the top-rated books within the specified genre.
+    - pandas.DataFrame: A DataFrame containing the top-rated books within the 
+        specified genre.
     """
     # Filter books by the specified genre
     filtered_books = data_frame[data_frame['generic_genre'] == genre]
+    filtered_books = filtered_books.drop_duplicates(subset = "book_title")
 
     # Sort the filtered DataFrame by book rating in descending order
     # and select the top `num_books`

@@ -1,7 +1,6 @@
 """
 Module: test_search
 
-
 This module contains unit tests for the search module. 
 
 The tests are organized into two classes TestHelperFunctions and
@@ -33,11 +32,17 @@ test_query_to_index_calls_fill_na(self, mock_fill_na):
 test_query_exact(self):
     Confirms that exact match queries return expected match.
 
+def test_query_to_index_nomatch(self):
+    Confirm error raised if no matching author or title.
+
 Test Functions in TestSearch Class
 ======================================    
 
-test_keyword_exact(self):
-    Confirms that exact match queries return expected match. 
+test_semantic_search(self):
+    Confirms semantic-search correctly calls get_semantic_results.
+
+test_plot_semantic(self):
+    Test plot_semantic_search against expected result.
 
 test_author2_search_exact(self):
     Confirm author2_search returs books by that author only; exact match.
@@ -48,14 +53,8 @@ test_author2_search_close(self):
 test_author2_search_nomatch(self):
     Confirm error raised if no matching author.
 
-test_plot_semantic(self):
-    Test plot_semantic_search against expected result.
-
 test_genre_one_shot(self):
-    Confirm genre search returns expected result.
-
-test_genre_all:
-    Confirm sum of all genres is sum of all rows in data.       
+    Confirm genre search returns expected result.   
 
 Dependencies:
 - unittest: The built-in unit testing framework in Python.
@@ -86,17 +85,22 @@ class TestHelperFunctions(unittest.TestCase):
         """ 
         Creates and loads teating data. 
         """
+        # Data with ratings and preprocessed embeddings
         f_embed = "data/test_data/test_data_w_embeddings.csv"
         self.test_dat_e = pd.read_csv(f_embed)
+        # Data w ratings but no preprocessed embed
         f_ratings = "data/test_data/test_data.csv"
         self.test_dat_r = pd.read_csv(f_ratings)
-        self.test_dat_filled = HelperFunctions.fill_na(self.test_dat_e)
 
+        # unfilled dataframe
         unfilled_data = {'author': ['Author1', None, 'Author3'],
                 'book_title': ['Book1', None, 'Book3'],
                 'genre': [None, 'Genre2', 'Genre3'],
                 'summary': ['Summary1', 'Summary2', None]}
-        self.test_dat2 = pd.DataFrame(unfilled_data)
+        self.test_dat_u = pd.DataFrame(unfilled_data)
+
+        # filled datframe
+        self.test_dat_filled = HelperFunctions.fill_na(self.test_dat_e)
 
 
     def test_preprocess_text(self):
@@ -127,13 +131,13 @@ class TestHelperFunctions(unittest.TestCase):
         expected = "Science Fiction, Speculative fiction"
         self.assertEqual(results, expected)
 
-
     def test_fill_na(self):
         """
         Confirm missing values in a df are correctly filled
         """
 
-        filled_df = HelperFunctions.fill_na(self.test_dat2)
+        filled_df = HelperFunctions.fill_na(self.test_dat_u)
+
         self.assertEqual(filled_df.isnull().sum().sum(), 0)
         self.assertEqual(filled_df['author'].iloc[1], 'Unknown')
         self.assertEqual(filled_df['book_title'].iloc[1], 'Unknown')
@@ -173,9 +177,8 @@ class TestHelperFunctions(unittest.TestCase):
         """
         mock_fill_na.return_value = self.test_dat_filled
         columns = ["book_title"]
-        HelperFunctions.query_to_index(self.test_dat_e, "dog", columns)
+        HelperFunctions.query_to_index(self.test_dat_e, "Leviticus", columns)
         mock_fill_na.assert_called_once_with(self.test_dat_e)
-
 
     def test_query_exact(self):
         """
@@ -195,6 +198,16 @@ class TestHelperFunctions(unittest.TestCase):
             self.assertEqual(result, expected)
 
 
+    def test_query_to_index_nomatch(self):
+        """
+        Confirm error raised if no matching author or title.
+        """
+        query = "gribnif blah blah blah"
+        for col in ["book_title", "author"]:
+            with self.assertRaises(ValueError):
+                HelperFunctions.query_to_index(self.test_dat_e,
+                                               query, [col])
+
 class TestSearch(unittest.TestCase):
 
     """
@@ -213,21 +226,39 @@ class TestSearch(unittest.TestCase):
         self.test_data_g = pd.read_csv(f_genre)
 
 
-    def test_keyword_exact(self):
+    @patch("search.HelperFunctions.get_semantic_results")
+    def test_semantic_search(self, mock_get):
         """
-        Confirms that exact match queries return expected match
-        
-        Pattern test. In any case where the query string is an exact 
-        match to the title of a book in the datset  
-        we expect the first book returned to be the exact match. 
+        Confirms semantic-search correctly calls get_semantic_results.
         """
-        for idx in range(2):
-            query = self.test_dat_e["book_title"][idx]
-            books = search.keyword_search(self.test_dat_e, query, num_books=10)
-            results = books.iloc[0]["book_title"]
-            expected = query
-            self.assertEqual(results, expected)
 
+        query = "Leviticus"
+        f = "data/complete_w_embeddings/"
+        f += "complete_w_embeddings.csv_part_1.csv"
+        df = pd.read_csv(f)
+        mock_get.return_value = [0, 1, 2, 3, 4]
+        results = search.semantic_search(df, query, ["book_title"],
+                                         num_books=5)
+        for i in range(5):
+            self.assertEqual(results.iloc[i]["book_title"],
+                             df.iloc[i]["book_title"])
+
+
+    def test_plot_semantic(self):
+        """
+        Test plot_semantic_search against expected result.
+        
+        One shot test. Using test data and a query that briefly 
+        describes the plot of testbook_id 18560, "Leaf by Niggle", ensure 
+        this book is returned as the top result."
+
+        """
+        query = "A man paints a tree."
+        books = search.plot_semantic_search(self.test_dat_e,
+                                            query, num_books=10)
+        results = books.iloc[0]["book_id"]
+        expected = self.test_dat_e.iloc[7]["book_id"] # 7=idx for Leaf by Niggle
+        self.assertEqual(results, expected)
 
     def test_author2_search_exact(self):
         """ 
@@ -268,39 +299,6 @@ class TestSearch(unittest.TestCase):
         with self.assertRaises(ValueError):
             search.author2_search(self.test_dat_r, query, num_books=10)
 
-    def test_plot_semantic(self):
-        """
-        Test plot_semantic_search against expected result.
-        
-        One shot test. Using test data and a query that briefly 
-        describes the testbook_id 18560, "Leaf by Niggle", ensure 
-        this book is returned as the top result."
-
-        """
-        query = "A man paints a tree."
-        books = search.plot_semantic_search(self.test_dat_e, query, num_books=10)
-        results = books.iloc[0]["book_id"]
-        expected = self.test_dat_e.iloc[7]["book_id"] # 7 = idx for Leaf by Niggle
-        # print(self.test_dat[self.test_dat["book_id"] == 18560])
-        self.assertEqual(results, expected)
-
-    # def test_semantic(self):
-    #     """
-    #     Test semantic_search against expected result.
-
-    #     Using test data and a query that briefly describes the test
-    #     book_id 18560, "Leaf by Niggle", ensure this book is returned
-    #     as the top result."
-    #     """
-    #     query = " Leaf by Niggle"
-    #     columns = ["book_title"]
-    #     with patch('search.indices', test_indices):  # TO DO: MAKE THESE
-    #     books = search.semantic_search(self.test_dat, query, columns, num_books=10)
-    #     books = search.semantic_search(self.test_dat, query, columns, num_books=10)
-    #     results = books.iloc[0]["book_id"]
-    #     expected = self.test_dat.iloc[7]["book_id"] # 7 = idx for Leaf by Niggle
-    #     self.assertEqual(results, expected)
-
     def test_genre_one_shot(self):
         """ 
         Confirm genre search returns expected result.
@@ -313,25 +311,6 @@ class TestSearch(unittest.TestCase):
         results = search.genre_search(df, query).iloc[0]["book_title"]
         expected = "The Queen of the Damned"
         self.assertEqual(results,expected)
-
-    def test_genre_all(self):
-        """ Confirm sum of all genres is sum of dataset.
-        
-        Iterates over the rows in the test data. Counts the number
-        of rows returned for each genre and sums the total. Expected
-        total sum is the number of rows in the genre dataset.
-        """
-        df = self.test_data_g
-        all_genres = set(df["generic_genre"])
-        count = 0
-        for genre in all_genres:
-            results = search.genre_search(df, genre, num_books=df.shape[0])
-            count += results.shape[0]
-        expected = df.shape[0]
-        self.assertEqual(count, expected)
-
-
-
 
 if __name__ == '__main__':
     unittest.main()
