@@ -2,6 +2,16 @@
 
 Information regarding how to set up the environment and run the application in your local browser can be found [here](../README.md#Local-Setup-and-Environment)
 
+### Running our Tests
+
+You can run our tests by the command:
+
+```bash
+python -m unittest discover
+```
+
+Make sure you are in the 'bookworm' directory when running the above command. You should see that 53 tests pass.
+
 
 ## Home Page
 
