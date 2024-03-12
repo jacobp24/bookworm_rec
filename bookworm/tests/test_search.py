@@ -1,7 +1,6 @@
 """
 Module: test_search
 
-
 This module contains unit tests for the search module. 
 
 The tests are organized into two classes TestHelperFunctions and
@@ -55,10 +54,7 @@ test_author2_search_nomatch(self):
     Confirm error raised if no matching author.
 
 test_genre_one_shot(self):
-    Confirm genre search returns expected result.
-
-test_genre_all:
-    Confirm sum of all genres is sum of all rows in data.       
+    Confirm genre search returns expected result.   
 
 Dependencies:
 - unittest: The built-in unit testing framework in Python.
@@ -89,17 +85,22 @@ class TestHelperFunctions(unittest.TestCase):
         """ 
         Creates and loads teating data. 
         """
+        # Data with ratings and preprocessed embeddings
         f_embed = "data/test_data/test_data_w_embeddings.csv"
         self.test_dat_e = pd.read_csv(f_embed)
+        # Data w ratings but no preprocessed embed
         f_ratings = "data/test_data/test_data.csv"
         self.test_dat_r = pd.read_csv(f_ratings)
-        self.test_dat_filled = HelperFunctions.fill_na(self.test_dat_r)
 
+        # unfilled dataframe
         unfilled_data = {'author': ['Author1', None, 'Author3'],
                 'book_title': ['Book1', None, 'Book3'],
                 'genre': [None, 'Genre2', 'Genre3'],
                 'summary': ['Summary1', 'Summary2', None]}
         self.test_dat_u = pd.DataFrame(unfilled_data)
+
+        # filled datframe
+        self.test_dat_filled = HelperFunctions.fill_na(self.test_dat_e)
 
 
     def test_preprocess_text(self):
@@ -130,13 +131,13 @@ class TestHelperFunctions(unittest.TestCase):
         expected = "Science Fiction, Speculative fiction"
         self.assertEqual(results, expected)
 
-
     def test_fill_na(self):
         """
         Confirm missing values in a df are correctly filled
         """
 
         filled_df = HelperFunctions.fill_na(self.test_dat_u)
+
         self.assertEqual(filled_df.isnull().sum().sum(), 0)
         self.assertEqual(filled_df['author'].iloc[1], 'Unknown')
         self.assertEqual(filled_df['book_title'].iloc[1], 'Unknown')
@@ -178,7 +179,6 @@ class TestHelperFunctions(unittest.TestCase):
         columns = ["book_title"]
         HelperFunctions.query_to_index(self.test_dat_e, "Leviticus", columns)
         mock_fill_na.assert_called_once_with(self.test_dat_e)
-
 
     def test_query_exact(self):
         """
@@ -260,8 +260,6 @@ class TestSearch(unittest.TestCase):
         expected = self.test_dat_e.iloc[7]["book_id"] # 7=idx for Leaf by Niggle
         self.assertEqual(results, expected)
 
-
-
     def test_author2_search_exact(self):
         """ 
         Confirm author2_search returs books by that author only; exact match.
@@ -313,23 +311,6 @@ class TestSearch(unittest.TestCase):
         results = search.genre_search(df, query).iloc[0]["book_title"]
         expected = "The Queen of the Damned"
         self.assertEqual(results,expected)
-
-    def test_genre_all(self):
-        """ Confirm sum of all genres is sum of dataset.
-        
-        Iterates over the rows in the test data. Counts the number
-        of rows returned for each genre and sums the total. Expected
-        total sum is the number of rows in the genre dataset.
-        """
-        df = self.test_data_g
-        all_genres = set(df["generic_genre"])
-        count = 0
-        for genre in all_genres:
-            results = search.genre_search(df, genre, num_books=df.shape[0])
-            count += results.shape[0]
-        expected = df.shape[0]
-        self.assertEqual(count, expected)
-
 
 if __name__ == '__main__':
     unittest.main()

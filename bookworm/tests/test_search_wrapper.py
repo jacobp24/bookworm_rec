@@ -23,6 +23,9 @@ test_filter_no_mins(self):
 test_filter_missing_col1(self):
     Confirm ValueError raised if no Book-Rating colum.
 
+test_filter_missing_col2(self):
+        Confirm ValueError raised if no RatingCount colum.
+
 
 Tests in Class TestSelectSearch
 ===============================
@@ -143,7 +146,7 @@ class TestFilter(unittest.TestCase):
             search_wrapper.filter_ratings(test_dat, 0,0)
 
 class TestSelectSearch(unittest.TestCase):
-    """Test cases for the filter_ratings function"""
+    """Test cases for the select search function"""
 
     def test_select_search_author1(self):
         """
@@ -152,7 +155,9 @@ class TestSelectSearch(unittest.TestCase):
         with mock.patch("search.author2_search") as mock_auth2:
             with mock.patch("search.semantic_search") as mock_semantic_search:
                 mock_ret_auth2 = pd.DataFrame([[0,0], [2,200]])
+                mock_ret_auth2.columns = ["book_number", "book_title"]
                 mock_ret_semantic = pd.DataFrame([[1,100], [3,300]])
+                mock_ret_semantic.columns = ["book_number", "book_title"]
                 mock_auth2.return_value = mock_ret_auth2
                 mock_semantic_search.return_value = mock_ret_semantic
                 results = search_wrapper.select_search("Author1",

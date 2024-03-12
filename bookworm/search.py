@@ -3,15 +3,16 @@ Module with search functions accross several modalities.
 
 Includes helper functions as well as several search modes: 
     (1) semantic search - hybird keyword (TfidfVectorizer) and
-        semantic (Voyeageai) search
+        semantic (Voyeageai) search. Used for Author1 and Book_Title 
+        search.
     (2) plot_semantic search based on voyageai semantic search
     (3) author2 search - fuzzy matching to author field 
     (4) genre search - exact matching to standardized genre field
 
 Functions in TestHelperFunctions Class
 ==================================
-parse_genres(genre_str)
-    Parse genre dictionaries into keywords joined by commas
+parse_genres(genre_dict)
+    Parse genre dictionaries into keywords joined by commas.
 
 fill_na(df)
     Fill in missing values in dataframe with "unknown" or similar.
@@ -19,20 +20,17 @@ fill_na(df)
 preprocess_text(text)
     Convert text to all lowercase.
 
-get_semantic_results
+get_semantic_results(df, query, columns, num_books=10)
     Extracts the indices of the closest books to given book_index.
 
-query_to_index
+query_to_index(df, query, columns, vectorizer=None)
     Maps query to the closest book index via keyword search.
 
 
 Search Mode Functions
 =====================
 
-author_similar_search(df, query, num_books=10):
-    Search for closest set of books via keyword search.
-
-semantic_search(df, query, num_books=10):
+semantic_search(df, query, columns, num_books=10):
     Search for the closest books via keyword + semantic search. 
 
 plot_semantic_search(df, query, num_books = 10):
@@ -40,6 +38,9 @@ plot_semantic_search(df, query, num_books = 10):
     
 author2_search(df, query, num_books=10):
     Search for closest set of books via fuzzy match on author field.
+
+genre_search(data_frame, genre, num_books=10):
+    Search for books within a specified genre and return the top-rated books.
 """
 
 import os
@@ -77,9 +78,9 @@ class HelperFunctions:
     """
 
     @staticmethod
-    def parse_genres(genre_str):
+    def parse_genres(genre_dict):
         """ 
-        Parse genre dictionaries into keywords joined by commas
+        Parse genre dictionaries into keywords joined by commas.
         
         Paramters:
             Genres: A dictinonary of genres.
@@ -89,7 +90,7 @@ class HelperFunctions:
         """
 
         try:
-            genres_dict = ast.literal_eval(genre_str)
+            genres_dict = ast.literal_eval(genre_dict)
             genres_text = ', '.join(genres_dict.values())
         except (ValueError, SyntaxError):
             genres_text = 'Unknown Genre'
@@ -129,7 +130,7 @@ class HelperFunctions:
     @staticmethod
     def get_semantic_results(book_index, num_books=10):
         """
-        Extracts the indices of the closest books to given book_index.
+        Extracts indices of the closest books to given book_index.
         
         Indices extracted from global variable indices. Indices
         variables assumed to reflect closest books based on
@@ -151,10 +152,11 @@ class HelperFunctions:
         """ 
         Maps query to the closest book index via keyword search.
         
-        Maps query based to the closest book in dataframe (df) 
+        Maps query to the closest book in dataframe (df) 
         based on keyword search using given vectorizer(default
         is TfidfVectorizer). Then returns the index of that book
-        in the dataframe.  
+        in the dataframe.  Raises exception if no close match
+        (consine similarity > .75).
 
         Parameters: 
             df:         A pandas dataframe, each row representing a book. 
@@ -164,9 +166,13 @@ class HelperFunctions:
             query:      A string.  
 
             columns:    The columns to search over for the keyword search.
- 
+
+            vectorizer: Vectorizer to use to convert query for keyword search.
+                        If none supplied TfidfVectorizer used. 
         Returns: 
             An np.int; the index of the closest book. 
+        Exceptions:
+            If no match (> .75 cosine similarity) raise ValueError.  
     """
 
         df = HelperFunctions.fill_na(df)
@@ -195,8 +201,8 @@ class HelperFunctions:
                 err_msg += f" Did you perhaps mean {best_match}?"
             err_msg += " You can also try searching by plot."
             raise ValueError(err_msg)
-
         return most_relevant_index
+
 
 def semantic_search(df, query, columns, num_books=10):
     """ 
@@ -213,7 +219,7 @@ def semantic_search(df, query, columns, num_books=10):
 
         query:      A string.  
 
-        columns:    THe columns to search over during keyword search.
+        columns:    The columns to search over during keyword search.
 
         num_books:  Int. The number of indices to extract. 
                     Defualt is 10.
@@ -229,6 +235,46 @@ def semantic_search(df, query, columns, num_books=10):
     results = df.loc[semantic_indices].head(num_books)
     return results
 
+def plot_semantic_search(df, query, num_books = 10):
+    """
+    Search for closest set of books via pure semantic search.
+
+    Uses voyage-lite-02-instruct api to map query to a book
+    in dataframe df based on semantic search.  Then selects
+    closes set of books to matched book based on pre-computed
+    semantic embeddings.
+
+    Parameters: 
+        df:     A pandas dataframe, each row representing a book. 
+                
+        query:  A string.  
+
+        num_books:  Int. The number of books to extract. 
+                    Defualt is 10.
+    Returns: 
+        A dataframe containing the selected books. 
+    """
+    # computing embeddings for the query
+    query_embedding = vo.embed(query, model="voyage-lite-02-instruct",
+                               input_type="document").embeddings
+
+    # Convert embeddings from string representation back to lists
+    # (and then to numpy arrays)
+    embeddings_matrix = np.array([ast.literal_eval(embedding) if
+            isinstance(embedding, str) else embedding for embedding
+            in df['embeddings']])
+
+    # Compute cosine similarities between the query embedding
+    #and the book embeddings
+    similarities = cosine_similarity(query_embedding, embeddings_matrix)
+
+    # Get indices of the top N similar books
+    top_n_indices = np.argsort(similarities[0])[::-1][:num_books]
+    closest_books = df.iloc[top_n_indices]
+
+    # Return the DataFrame containing the closest books
+    return closest_books
+
 def author2_search(df, query, num_books=10):
 
     """
@@ -237,12 +283,16 @@ def author2_search(df, query, num_books=10):
     Parameters: 
         df:     A pandas dataframe, each row representing a book. 
                 Assumes df contains column "author".
-        query:  A string.  
+
+        query:  A string. Value to serach for. 
 
         num_books:  Int. The number of books to extract. 
                     Defualt is 10.
     Returns: 
         A dataframe containing the selected books. 
+
+    Exceptions:
+        If no match on author field >.75, raise ValueError.      
     """
     #calculate match ratio
     df['ratio'] = df.apply(lambda row: fuzz.ratio(row['author'], query), axis=1)
@@ -276,46 +326,6 @@ def author2_search(df, query, num_books=10):
     results = results_sorted.head(num_books)
     return results
 
-def plot_semantic_search(df, query, num_books = 10):
-    """
-    Search for closest set of books via pure semantic search.
-
-    Uses voyage-lite-02-instruct api to map query to a book
-    in dataframe df based on semantic search.  Then selects
-    closes set of books to matched book based on pre-computed
-    semantic embeddings.
-
-    Parameters: 
-        df:     A pandas dataframe, each row representing a book. 
-                Assumes df contains column "author".
-        query:  A string.  
-
-        num_books:  Int. The number of books to extract. 
-                    Defualt is 10.
-    Returns: 
-        A dataframe containing the selected books. 
-    """
-    # computing embeddings for the query
-    query_embedding = vo.embed(query, model="voyage-lite-02-instruct",
-                               input_type="document").embeddings
-
-    # Convert embeddings from string representation back to lists
-    # (and then to numpy arrays)
-    embeddings_matrix = np.array([ast.literal_eval(embedding) if
-            isinstance(embedding, str) else embedding for embedding
-            in df['embeddings']])
-
-    # Compute cosine similarities between the query embedding
-    #and the book embeddings
-    similarities = cosine_similarity(query_embedding, embeddings_matrix)
-
-    # Get indices of the top N similar books
-    top_n_indices = np.argsort(similarities[0])[::-1][:num_books]
-    closest_books = df.iloc[top_n_indices]
-
-    # Return the DataFrame containing the closest books
-    return closest_books
-
 def genre_search(data_frame, genre, num_books=10):
     """
     Search for books within a specified genre and return the top-rated books.
@@ -336,6 +346,7 @@ def genre_search(data_frame, genre, num_books=10):
     """
     # Filter books by the specified genre
     filtered_books = data_frame[data_frame['generic_genre'] == genre]
+    filtered_books = filtered_books.drop_duplicates(subset = "book_title")
 
     # Sort the filtered DataFrame by book rating in descending order
     # and select the top `num_books`
