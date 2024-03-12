@@ -12,7 +12,7 @@ Click on the Search Mode and select an option to get started!
 ## Book Suggestions by Author
 
 By clicking on the option: "Books similar to those by my favorite author", our search tool will give the top 10
-recommended books by the inputed author from our model.
+recommended books by the inputed author AND books similar to your favorite author from our model.
 
 OR There is an option "Most popular books by my favorite author" which generates recommened books only within that
 requested author using rating analysis.
