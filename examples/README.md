@@ -21,12 +21,12 @@ Just input the author name, hit enter, and then press the "Search Now" button at
 
 Here is an example when you input Agatha Christie:
 
-[Author-1](walkthrough_images/walkthrough_image1.jpg)
+![Author-1](walkthrough_images/walkthrough_image1.jpg)
 
 You can also use the sliders at the bottom to exclude books that have lower ratings or not many reviews. Keep in mind
 this may return less than 10 results. 
 
-[Author-2](walkthrough_images/walkthrough_image2.jpg)
+![Author-2](walkthrough_images/walkthrough_image2.jpg)
 
 ## Book Suggestions by Personal Interests
 
@@ -37,7 +37,7 @@ Click on the "Books similar to my favorite plot" option, and search away!
 
 For example: If you loved the Hunger Games you may write "girl enters arena for a fight to the death"
 
-[Plot1](walkthrough_images/walkthrough_image3.jpg)
+![Plot1](walkthrough_images/walkthrough_image3.jpg)
 
 ### But what if I don't know the plot??
 
@@ -47,7 +47,7 @@ Click on "Books similar to my favorite book", enter your favorite title and pres
 
 So if you enter "The Hunger Games":
 
-[Title1](walkthrough_images/walkthrough_image4.jpg)
+![Title1](walkthrough_images/walkthrough_image4.jpg)
 
 
 This will give you results through a different search type which can broaden your options!
@@ -61,7 +61,7 @@ A new dropdown will appear to pick a genre from the list. Onwards and Searchward
 
 Mystery is a fan favorite:
 
-[Genre1](walkthrough_images/walkthrough_image5.jpg)
+![Genre1](walkthrough_images/walkthrough_image5.jpg)
 
 
 
