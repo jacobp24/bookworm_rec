@@ -2,8 +2,57 @@
 """ 
 Module to orchestrate search based on user inputs. 
 
-Assembles data to search over; calls proper search function given user 
-preferred search mode; and filters results based on user filters.
+Assembles data to search over; calls proper search function and data sets
+given user preferred search mode; and filters results based on user filters.
+
+SEARCH ALGORYTHM HIGH-LEVEL SUMMARY
+====================================
+(A) For search mode Title ("Books similar to my favorite book"))
+    - Step 1: Perform "semantic_search" (Hybrid keyword + semantic)
+        - Note: semantic search maps query to the closest book in dataset
+            (via keyword search), and then retrieves next closest books 
+            based on pre-processed semantic search distances. Books returned
+            sorted by distance.  
+        - Error raised if no close match in database to user entered title
+        - Data used = "complete_w_embeddings.csv" as assembled by 
+            helper functions
+    - Step 2: Results from Semantic Search Filtered by user slider inputs
+
+(B)  For search mode Author1 ("Books similar to those by my favorite author")
+    - Step 1: Perform "author2_search" (Fuzzy match on author field)
+        - Error raised if no close match in database to user entered title
+        - Books returned sorted by average ratings
+        - Data used = "complete_w_ratings.csv"
+    - Step 2: Perform "semantic_search" (Hybrid keyword + semantic)
+        - Note: semantic search maps query to the closest book in dataset
+            (via keyword search), and then retrieves next closest books 
+            based on pre-processed semantic search distances. Books returned
+            sorted by distance.  
+        - Error raised if no close match in database to user entered title
+        - Data used = "complete_w_embeddings.csv" as assembled by 
+            helper functions.
+    - Step 3: Combine results of Step 1 and Step 2, by alternating rows in df
+    - Step 4: Combined results from step 3 filtered by user slider inputs
+
+(C) For search mode Plot ("Books similar to my favorite plot")
+    - Step1: Perform "plot_semantic_search" (pure semantic search) 
+        - Data used = "complete_w_embeddings.csv" as assembled by 
+            helper functions
+    - Step 2: Results from plot_semantic_search Filtered by user slider inputs
+
+(D) For search mode Author2 ("Most popular books by my favorite "author")
+    - Step 1: Perform "author2_search" (Fuzzy match on author field)
+        - Error raised if no close match in database to user entered title
+        - Books returned sorted by average ratings
+        - Data used = "complete_w_ratings.csv"
+    - Step 2: Results from plot_semantic_search Filtered by user slider inputs
+
+(E) For search mode genre ("most popular books in my favorite genre")
+     Step 1: Perform "genre_field" (Exact match on standardized genre field)
+        - Data used = "genre.csv"
+    - Step 2: Results from plot_semantic_search Filtered by user slider inputs
+    
+   
 
 FUNCTIONS
 =========
@@ -11,7 +60,10 @@ FUNCTIONS
 assemble_data(path1, path2, path3, path4)
     Assembles data split into 4 pieces wtih same column names
     
-filter_ratings(results, min_ave_ratings, min_num_rating)
+assemble_embeddings_data():
+    Functions that assembles the data with embeddings
+
+filter_ratings(results, min_ave_ratings, min_num_rating):
     Filters serach results by user ratings prefrences. 
 
 select_search(search_mode, search_value, min_ave_rating, 
@@ -106,7 +158,7 @@ def select_search(search_mode, search_value, num_books=10):
 
     Parameters:
         search_mode: str
-            The mode of search ('Author2', 'Title', 'Plot', 'Genre').
+            The mode of search ('Title', 'Author1', 'Plot', 'Author2', 'Genre').
         search_value: str
             The value to search for.
         num_books: int, optional
@@ -116,11 +168,27 @@ def select_search(search_mode, search_value, num_books=10):
         pandas.DataFrame
             A dataframe of search results.
     """
+    if search_mode == "Author1":
 
-    if search_mode == "Author2":
-        df = pd.read_csv("data/complete_w_ratings.csv")
-        results = search.author2_search(df, search_value,
+        df_r = pd.read_csv("data/complete_w_ratings.csv")
+        results1 = search.author2_search(df_r, search_value,
                                         num_books=max(num_books * 2, 20))
+
+        df_e = assemble_embeddings_data()
+        results2 = search.semantic_search(df_e, search_value, ["author"],
+                                         num_books=max(num_books * 2, 20))
+
+       # Concatenate the dataframes by alternating rows
+        combined_df = pd.DataFrame()
+        for i in range(max(len(results1), len(results2))):
+            if i < results1.shape[0]:
+                combined_df = pd.concat([combined_df, results1.iloc[[i]]])
+            if i < results2.shape[0]:
+                combined_df = pd.concat([combined_df, results2.iloc[[i]]])
+        combined_df = combined_df.drop_duplicates(subset=['book_title'])
+        combined_df.reset_index(drop=True, inplace=True)
+        results = combined_df
+
     elif search_mode == "Title":
         df = assemble_embeddings_data()
         results = search.semantic_search(df, search_value, ["book_title"],
@@ -129,18 +197,18 @@ def select_search(search_mode, search_value, num_books=10):
         df = assemble_embeddings_data()
         results = search.plot_semantic_search(df, search_value,
                                               num_books=max(num_books * 2, 20))
-    elif search_mode == "Genre":
+    elif search_mode == "Author2":
+        df = pd.read_csv("data/complete_w_ratings.csv")
+        results = search.author2_search(df, search_value,
+                                        num_books=max(num_books * 2, 20))
+
+    else: #search_mode == "Genre"
         try:
             genre_df = pd.read_csv("bookworm/data/genre.csv")
         except FileNotFoundError:
             genre_df = pd.read_csv("data/genre.csv")
         results = search.genre_search(genre_df, search_value,
                                       num_books=max(num_books * 2, 20))
-
-    else:  # Default to keyword search on all columns for other modes
-        df = pd.read_csv("data/complete_w_ratings.csv")
-        results = search.keyword_search(df, search_value,
-                                        num_books=max(num_books * 2, 20))
 
     return results
 

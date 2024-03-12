@@ -1,7 +1,7 @@
 """
 Script to create embeddings for test data.
 
-Module should be run from /scripts folder. 
+Script should be run from /scripts folder. 
 """
 
 
