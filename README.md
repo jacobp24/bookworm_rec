@@ -101,7 +101,7 @@ is in double quotes!
 
 3. To check that the API KEY was created successfully:
 ```bash
-`echo $API_KEY`
+echo $API_KEY
 ```
 
 4. Make sure your current directory is set the 'bookworm' folder. If it is not please run this from within the `bookworm_rec` directory:
