@@ -92,8 +92,8 @@ jobs:
     #  # Next step: run pylint. Anything less than 10/10 will fail.
       - name: Lint with pylint
         run: |
-        pylint bookworm/*.py
-        pylint bookworm/**/*.py
+          pylint bookworm/*.py
+          pylint bookworm/**/*.py
          
 
       # Next step: run the unit tests with code coverage.
