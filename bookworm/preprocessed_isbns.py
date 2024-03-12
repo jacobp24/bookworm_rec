@@ -52,7 +52,7 @@ book_rating = pd.read_csv(BOOK_RATINGS_PATH, sep=';', quotechar='"',
 
 
 def check_digit_13(isbn):
-    """ Checks that ISBN is currently 12 digits, then uses mathematical
+    """ Checks that ISBN is currently 12 digits, then uses a mathematical
     formula for generation of last digit according to ISBN-13
     standards during conversion.
 
