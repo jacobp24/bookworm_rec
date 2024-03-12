@@ -104,23 +104,23 @@ In order to generate the recommendation embeddings we utilized the [VoyageAI](ht
 
 Please create a local API KEY by following these steps:
 
-1. Click [Here](https://dash.voyageai.com/) to create your own API KEY.
+1. Make sure your current directory is set the 'bookworm' folder. If it is not please run this from within the `bookworm_rec` directory:
+```bash
+cd bookworm
+```
 
-2. Copy your new API key and run this command:
+2. Click [Here](https://dash.voyageai.com/) to create your own API KEY.
+
+3. Copy your new API key and run this command:
 ```bash
 export API_KEY="replace-with-your-api-key"
 ```
 This command is space specific i.e. there cannot be spaces before and after the equals. Make sure your new API KEY
 is in double quotes!
 
-3. To check that the API KEY was created successfully:
+4. To check that the API KEY was created successfully:
 ```bash
 echo $API_KEY
-```
-
-4. Make sure your current directory is set the 'bookworm' folder. If it is not please run this from within the `bookworm_rec` directory:
-```bash
-cd bookworm
 ```
 
 5. Okay now we are ready to run the application!
