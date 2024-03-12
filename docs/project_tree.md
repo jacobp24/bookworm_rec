@@ -1,4 +1,4 @@
-.
+
 |__ LICENSE
 |__ README.md
 |__ bookworm
