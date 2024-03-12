@@ -50,9 +50,14 @@ Includes:
 
 ### ISBN Matching
 [Google Books API](https://developers.google.com/books/)
+
 4. Google Books API
     - ISBN (13 digit)
     - Book Title
+    - This API was used to augment CMU data with ISBN Numbers to help for matching with Book Ratings dataset
+    - ISBN numbers obtained via Google APIs also included in [data_raw/complete_data.csv](data_raw/complete_data.csv)
+  
+A description of data cleaning, joining and preprocessing can be found: 
 
 ## Local Setup and Environment
 
