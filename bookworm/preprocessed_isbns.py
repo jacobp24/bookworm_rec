@@ -46,7 +46,7 @@ complete = complete.dropna(subset=['ISBN'])
 # Filtering out rows with invalid ISBNs
 filt_complete = complete[complete['ISBN'].str[:-1].str.isnumeric()]
 
-BOOK_RATINGS_PATH = 'data/BX-Book-Ratings.csv'
+BOOK_RATINGS_PATH = '..data/BX-Book-Ratings.csv'
 book_rating = pd.read_csv(BOOK_RATINGS_PATH, sep=';', quotechar='"',
                           encoding='windows-1252')
 
