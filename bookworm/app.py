@@ -43,6 +43,9 @@ st.set_page_config(
 
 # Define CSS for styling
 def local_css(file_name):
+    """
+    DUMMY
+    """
     with open(file_name, encoding='utf-8') as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
@@ -167,6 +170,9 @@ def main():
     st.image("images/books_banner.png", use_column_width=True)
 
     title_image = "images/butterfly.png"
+    
+    with open(title_image, "rb") as file:
+        image_data = base64.b64encode(file.read()).decode()
 
 
     st.markdown(
@@ -174,6 +180,7 @@ def main():
         <div class="container">
             <img class="title-img" src="data:image/png;base64,
             {base64.b64encode(open(title_image, "rb").read()).decode()}">
+            <img class="title-img" src="data:image/png;base64, {image_data}">
             <p class="title-text">The Bookish Butterfly</p>
         </div>
         """,
