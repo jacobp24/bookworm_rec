@@ -116,11 +116,26 @@ def select_search(search_mode, search_value, num_books=10):
         pandas.DataFrame
             A dataframe of search results.
     """
+    if search_mode == "Author1":
 
-    if search_mode == "Author2":
-        df = pd.read_csv("data/complete_w_ratings.csv")
-        results = search.author2_search(df, search_value,
+        df_r = pd.read_csv("data/complete_w_ratings.csv")
+        results1 = search.author2_search(df_r, search_value,
                                         num_books=max(num_books * 2, 20))
+
+        df_e = assemble_embeddings_data()
+        results2 = search.semantic_search(df_e, search_value, ["author"],
+                                         num_books=max(num_books * 2, 20))
+
+       # Concatenate the dataframes by alternating rows
+        combined_df = pd.DataFrame()
+        for i in range(max(len(results1), len(results2))):
+            if i < results1.shape[0]:
+                combined_df = pd.concat([combined_df, results1.iloc[[i]]])
+            if i < results2.shape[0]:
+                combined_df = pd.concat([combined_df, results2.iloc[[i]]])
+        combined_df.reset_index(drop=True, inplace=True)
+        results = combined_df
+
     elif search_mode == "Title":
         df = assemble_embeddings_data()
         results = search.semantic_search(df, search_value, ["book_title"],
@@ -129,18 +144,18 @@ def select_search(search_mode, search_value, num_books=10):
         df = assemble_embeddings_data()
         results = search.plot_semantic_search(df, search_value,
                                               num_books=max(num_books * 2, 20))
-    elif search_mode == "Genre":
+    elif search_mode == "Author2":
+        df = pd.read_csv("data/complete_w_ratings.csv")
+        results = search.author2_search(df, search_value,
+                                        num_books=max(num_books * 2, 20))
+
+    else: #search_mode == "Genre"
         try:
             genre_df = pd.read_csv("bookworm/data/genre.csv")
         except FileNotFoundError:
             genre_df = pd.read_csv("data/genre.csv")
         results = search.genre_search(genre_df, search_value,
                                       num_books=max(num_books * 2, 20))
-
-    else:  # Author + Similar author search
-        df = pd.read_csv("data/complete_w_ratings.csv")
-        results = search.author_similar_search(df, search_value,
-                                        num_books=max(num_books * 2, 20))
 
     return results
 

@@ -33,14 +33,14 @@ test_query_to_index_calls_fill_na(self, mock_fill_na):
 test_query_exact(self):
     Confirms that exact match queries return expected match.
 
+def test_query_to_index_nomatch(self):
+    Confirm error raised if no matching author or title.
+
 Test Functions in TestSearch Class
 ======================================    
 
 test_semantic_search(self):
     Confirms semantic-search correctly calls get_semantic_results.
-
-test_author_similar(self):
-    Confirms that exact match queries return expected match. 
 
 test_plot_semantic(self):
     Test plot_semantic_search against expected result.
@@ -198,6 +198,16 @@ class TestHelperFunctions(unittest.TestCase):
             self.assertEqual(result, expected)
 
 
+    def test_query_to_index_nomatch(self):
+        """
+        Confirm error raised if no matching author or title.
+        """
+        query = "gribnif blah blah blah"
+        for col in ["book_title", "author"]:
+            with self.assertRaises(ValueError):
+                HelperFunctions.query_to_index(self.test_dat_e,
+                                               query, [col])
+
 class TestSearch(unittest.TestCase):
 
     """
@@ -232,26 +242,6 @@ class TestSearch(unittest.TestCase):
         for i in range(5):
             self.assertEqual(results.iloc[i]["book_title"],
                              df.iloc[i]["book_title"])
-
-
-    def test_author_similar(self):
-        """
-        Confirms that exact match queries return expected match.
-        
-        Pattern test. In any case where the query string is an exact 
-        match to the author a book in the datset  
-        we expect one of the top 3 books returned to be by that author.  Note:
-        since keyword search is on all fields, some books returned may be by 
-        other authors but with similar plots etc. For a search that returns 
-        only books by the requested author, use author2 search.   
-        """
-        for idx in range(2):
-            query = self.test_dat_e["author"][idx]
-            books = search.author_similar_search(self.test_dat_e,
-                                                 query, num_books=10)
-            results = books["author"][0:2].tolist()
-            expected = query
-            self.assertIn(expected, results)
 
 
     def test_plot_semantic(self):
@@ -339,8 +329,6 @@ class TestSearch(unittest.TestCase):
             count += results.shape[0]
         expected = df.shape[0]
         self.assertEqual(count, expected)
-
-
 
 
 if __name__ == '__main__':

@@ -2,10 +2,11 @@
 Module with search functions accross several modalities.
 
 Includes helper functions as well as several search modes: 
-    (1) keyword search - based on TfidfVectorizer
-    (2) semantic search - hybird TfidfVectorizer/Voyeageai search
-    (3) plot_semantic search based on voyageai semantic search
-    (4) author2 search - fuzzy matching to author field 
+    (1) semantic search - hybird keyword (TfidfVectorizer) and
+        semantic (Voyeageai) search
+    (2) plot_semantic search based on voyageai semantic search
+    (3) author2 search - fuzzy matching to author field 
+    (4) genre search - exact matching to standardized genre field
 
 Functions in TestHelperFunctions Class
 ==================================
@@ -186,53 +187,16 @@ class HelperFunctions:
                 vectorizer.transform(df['combined_text'])).flatten()
         most_relevant_index = cosine_similarities.argsort()[-1]
         best_distance = cosine_similarities[most_relevant_index]
-        best_book = df.iloc[most_relevant_index]["book_title"]
+        best_match = df.iloc[most_relevant_index][columns[0]]
         if best_distance < 0.75:
-            err_msg = "Sorry, we can't find that book in our database."
+            err_msg = f"Sorry, we can't find that {columns[0]} in our database."
             # Offer suggestion if the best match had .5 < distance < .75
             if best_distance > 0.5:
-                err_msg += f" Did you perhaps mean {best_book}?"
-            err_msg += " You can also try searching by author or plot."
+                err_msg += f" Did you perhaps mean {best_match}?"
+            err_msg += " You can also try searching by plot."
             raise ValueError(err_msg)
 
         return most_relevant_index
-
-def author_similar_search(df, query, num_books=10):
-    """ 
-    Search for closest set of books via keyword search.
-    
-    Maps query to the closest books based on keyword search, 
-    using TfidVectorizer and English stopwords. Searches over all
-    columns of text. 
-
-     Parameters: 
-        df:         A pandas dataframe, each row representing a book. 
-                    Assumes df contains columns "book-title", "author",
-                    "genre", and "summary." 
-
-        query:      A string.  
-
-        num_books:  Int. The number of books to extract. 
-                    Defualt is 10.
-    Returns: 
-        A dataframe containing the selected books. 
-    """
-    df = HelperFunctions.fill_na(df)
-    df['genre'] = df['genre'].apply(HelperFunctions.parse_genres)
-    df['combined_text'] = df.apply(lambda x: HelperFunctions.preprocess_text(
-        f"{x['book_title']} {x['author']} {(x['genre'])} {x['summary']}"), 
-        axis=1)
-    query = HelperFunctions.preprocess_text(query)
-    vectorizer = TfidfVectorizer(stop_words='english')
-    tfidf_matrix = vectorizer.fit_transform(df['combined_text'])
-    query_vec = vectorizer.transform([query])
-    cosine_similarities = linear_kernel(query_vec, tfidf_matrix).flatten()
-    top_book_indices = cosine_similarities.argsort()[-num_books:][::-1]
-
-    keyword_results = df.iloc[top_book_indices]
-    keyword_indices = keyword_results.index.tolist()
-    results = df.loc[keyword_indices].head(num_books)
-    return results
 
 def semantic_search(df, query, columns, num_books=10):
     """ 

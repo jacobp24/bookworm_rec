@@ -24,11 +24,10 @@ test_filter_missing_col1(self):
     Confirm ValueError raised if no Book-Rating colum.
 
 
-
 Tests in Class TestSelectSearch
 ===============================
-test_select_search_author2(self, mock_author2_search):
-    Confirm correct search function called for search_mode Author2
+test_select_search_author1(self, mock_author_similar_search):
+    Confirm correct search functions called and results assembed. 
 
 test_select_search_title(self, mock_semantic_search):
     Confirm correct search function called for search_mode Title
@@ -36,8 +35,8 @@ test_select_search_title(self, mock_semantic_search):
 test_select_search_plot(self, mock_plot_semantic_search):
     Confirm correct search function called for search_mode plot
 
-test_select_search_author1(self, mock_author_similar_search):
-    Confirm correct search function called for search_mode Author1
+test_select_search_author2(self, mock_author2_search):
+    Confirm correct search function called for search_mode Author2
 
 test_select_search_genre(self, mock_plot_genre_search):
     Confirm correct search function called for search_mode Genre
@@ -146,6 +145,25 @@ class TestFilter(unittest.TestCase):
 class TestSelectSearch(unittest.TestCase):
     """Test cases for the filter_ratings function"""
 
+    def test_select_search_author1(self):
+        """
+        Confirm correct search functions called and results assembed. 
+        """
+        with mock.patch("search.author2_search") as mock_auth2:
+            with mock.patch("search.semantic_search") as mock_semantic_search:
+                mock_ret_auth2 = pd.DataFrame([[0,0], [2,200]])
+                mock_ret_semantic = pd.DataFrame([[1,100], [3,300]])
+                mock_auth2.return_value = mock_ret_auth2
+                mock_semantic_search.return_value = mock_ret_semantic
+                results = search_wrapper.select_search("Author1",
+                                                       "J. R. Tolkien")
+
+                # expect the resulting dataframe to have four rows
+                self.assertEqual(results.shape[0], 4)
+                # expect the resulting datframe to alternate rows
+                self.assertEqual(results.iloc[2,1], 200)
+                self.assertEqual(results.iloc[3,1], 300)
+
     @mock.patch("search.author2_search")
     def test_select_search_author2(self, mock_author2_search):
         """
@@ -176,16 +194,6 @@ class TestSelectSearch(unittest.TestCase):
         results = search_wrapper.select_search("Plot",
                                                "J. R. Tolkien")
         self.assertEqual(results, "Plot search performed")
-
-    @mock.patch("search.author_similar_search")
-    def test_select_search_author1(self, mock_author_similar_search):
-        """
-        Confirm correct search function called for search_mode Author1
-        """
-        mock_author_similar_search.return_value = "Author1 search performed"
-        results = search_wrapper.select_search("Author1",
-                                               "J. R. Tolkien")
-        self.assertEqual(results, "Author1 search performed")
 
     @mock.patch("search.genre_search")
     def test_select_search_genre(self, mock_keyword_search):
