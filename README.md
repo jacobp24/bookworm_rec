@@ -8,6 +8,16 @@ Jacob Peterson, Lawrie Brunswick, Priyam Gupta, Sue Boyd
 ##  Project Type
 Tool 
 
+## Table of Contents
+- [Introduction](#introduction)
+- [Questions of Interest](#questions-of-interest)
+- [Repository Structure](#repository-structure)
+- [Data Sources](#data-sources)
+- [Local Setup and Environment](#local-setup-and-environment)
+- [Examples](#examples)
+
+
+
 ## Questions of Interest
 ### MVP: 
 - What book should I read next?
@@ -26,6 +36,10 @@ Tool
 - We will create a simple UI for users to receive recommendations for books that they might like to read. 
 Users can input variables such as: previous book(s) that they have enjoyed, authors, titles, years, and/or similar plots, and the tool will make selections for other books they may wish to read. (Exact parameters tbd; part of our project will be to explore the optimal model and parameters for our rating system). 
 - (Stretch) The tool will also provide a link to purchasing the book on Amazon or other venues. 
+
+
+## Repository Structure
+<Insert Here>
 
 ## Data Sources 
 ### Book Ratings
@@ -116,7 +130,7 @@ streamlit run app.py
 Go check out our application in your local browser!!!
 
 
-### Examples
+## Examples
 
 Here is a [video demonstration]() of our app!
 
