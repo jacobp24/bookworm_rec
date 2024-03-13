@@ -52,9 +52,14 @@
     - streamlitdemo2.mp4
     - usecase.md
     - userstory.md
-- env.yml
-- pyproject.toml
-- requirements.txt
+- examples
+    - README.md
+    - walkthrough_images
+        - walkthrough_image1.jpg
+        - walkthrough_image2.jpg
+        - walkthrough_image3.jpg
+        - walkthrough_image4.jpg
+        - walkthrough_image5.jpg
 - scripts
     - Embeddings.py
     - Semantic Scores.py
@@ -64,3 +69,6 @@
         - create_test_genre.py
         - embeddings_test_data.py
         - semantic_scores_test_data.py
+- env.yml
+- pyproject.toml
+- requirements.txt
