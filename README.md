@@ -30,25 +30,6 @@ With millions of books able to be read, it can be daunting to find the perfect b
 - What are the popular or trending books in a particular genre?
 
 
-## Project Purpose  
-- We created a simple UI for users to receive recommendations for books that 
-they might like to read. 
-- While there are many book recommenders available, ours stands out because it 
-offers a multi-modal approach for diverse preferences of users.  
-- Users can search by author, book, genre, or even plot, with different search
-algorythms optimized for each modality. 
-- We use a leading edge semantic search approach for several of our search modes. 
-- And we are 100% not advertise influenced! 
-
-## Limitations
-- This project is a proof of concept, executed on a small dataset (~13K books 
-total after data cleaning), with some data sparsity even within those books.  As 
-such, some searches may return no or limited results.  
-- We'd love to see the work extended to a larger dataset!
-- When a user tries to search based on a book or an author that is not in our
- dataset, we let them know and encourage them to search another way.  
-
-
 ## Repository Structure
 
 [Find it here](docs/project_tree.md)
@@ -102,9 +83,9 @@ For this repository we have set up a environment that can be ran locally and ins
 appropriate version requirements. Conda needs to be installed before running the next commands. 
 Refer to [Conda Installation](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) for further instructions.
 
-Make sure your current directory is set the 'bookworm' folder. If it is not please run this from within the `bookworm_rec` directory:
+Make sure your current directory is set the 'bookworm_rec' folder. If it is not please run this from within the `bookworm_rec` directory:
 ```bash
-cd bookworm
+cd bookworm_rec
 ```
 
 Now run the next command to create the `bookworm_env` Conda environment:
@@ -129,22 +110,25 @@ you will need to do the following steps:
 In order to generate the recommendation embeddings we utilized the [VoyageAI](https://www.voyageai.com/) package.
 
 Please create a local API KEY by following these steps:
+1. Make sure your current directory is set the 'bookworm_rec' folder. If it is not please run this from within the `bookworm_rec` directory:
+```bash
+cd bookworm_rec
+```
+2. Click [Here](https://dash.voyageai.com/) to create your own API KEY.
 
-1. Click [Here](https://dash.voyageai.com/) to create your own API KEY.
-
-2. Copy your new API key and run this command:
+3. Copy your new API key and run this command:
 ```bash
 export API_KEY="replace-with-your-api-key"
 ```
 This command is space specific i.e. there cannot be spaces before and after the equals. Make sure your new API KEY
 is in double quotes!
 
-3. To check that the API KEY was created successfully:
+4. To check that the API KEY was created successfully:
 ```bash
 echo $API_KEY
 ```
 
-4. Okay now we are ready to run the application!
+5. Okay now we are ready to run the application!
 ```bash
 streamlit run app.py
 ```
@@ -153,7 +137,7 @@ Go check out our application in your local browser!!!
 
 ## Examples
 
-Here is a [video demonstration]() of our app!
+Here is a [video demonstration](docs/demo_for_3_13.mp4) of our app!
 
 OR
 
