@@ -44,5 +44,7 @@
 
 Please see [Here](../bookworm/data/README.md) for a more detailed description of the preprocessed data. 
 
-### <ins>Book Recommendation Flow:</ins>
-![Image](https://github.com/jacobp24/bookworm_rec/assets/85261391/8409d54d-e8bc-4b4b-a6e5-ded6c12e8d8d "Book Recommendation Flow")
+# <ins>Book Recommendation Flow:</ins>
+![image](https://github.com/jacobp24/bookworm_rec/assets/85261391/bf25c3f2-7eab-47ae-b91d-8b2b9482fe5f)
+
+
