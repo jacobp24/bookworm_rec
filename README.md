@@ -18,7 +18,7 @@ Tool
 
 ## Introduction
 
-With millions of books able to be read, it can be daunting to find the perfect book. Book recommendation tools aim to provide a one stop shop for your next read. Our book recommendation tool, "The Bookish Butterfly" employs a multi-modal approach to offer users a personalized approach. Unlike some recommender systems that only rely on ratings or genres, our model integrates multiple search modalities to provide better recommendations. We provide many options to the users depending on what they are looking for and do the heavy lifting to get some books that will be a great next read. There's no advertising influence here!
+With millions of books able to be read, it can be daunting to find the perfect book. Book recommendation tools aim to provide a one stop shop for your next read. Our book recommendation tool, "The Bookish Butterfly" employs a multi-modal approach to offer users a personalized approach. Unlike some recommender systems that only rely on ratings or genres, our model integrates multiple search modalities to provide better recommendations. We provide many options to the user depending on what they are looking for and do the heavy lifting to get some books that will be a great next read. There's no advertising influence here!
 
 
 ## Questions of Interest
