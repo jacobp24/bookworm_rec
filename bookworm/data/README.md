@@ -2,7 +2,7 @@
 
 
 # Data Used When Searching by Author Match 
-1.  File: ./complete_w_ratings.csv
+1.  File: ["complete_w_ratings.csv"](complete_w_ratings.csv)
     - 13639 books (rows)
     - Fields: "book_id", "book_title", "author", "publication_date", "genre",
       "summary", "ISBN13, "Book-Rating", "Rating-Count"
@@ -13,27 +13,27 @@
         are not required. 
 
 # Data Used When Performing Semantic Search or Keyword + Semantic Search
-2.  Folder: ./complete_w_embeddings
+2.  Folder: ["complete_w_embeddings"](complete_w_embeddings)
     - Contains the data from "complete_w_ratings.csv" augmented by semantic 
-        embeddings as described in the script: ../../scripts/Embeddings.py
+        embeddings as described in ["Embeddings.py"](../../scripts/Embeddings.py)
     - Due to space limitations, data is chunked into four files and dynamically
         reassembled when needed: 
             ./complete_w_embeddings.csv_part_1.csv
             ./complete_w_embeddings.csv_part_2.csv
             ./complete_w_embeddings.csv_part_3.csv
             ./complete_w_embeddings.csv_part_4.csv
-3.  File ./distances_updated.npy
+3.  File ["distances_updated.npy"](distances_updated.npy)
     - For each book, semantic distances to the next closest 21 books, based on 
         semantic distances computed via Voyeate API
-    - Output of script ../../scripts/Semantic Scores.py
-4.  Filed ./indices_updated.npy
+    - Output of script ["Semantic Scores.py"](../../scripts/Semantic Scores.py)
+4.  File ["indices_updated.npy"](bookworm/data/indices_updated.npy)
     - For each book, indices of the top 21 closest books, based on semantic 
         distances computed via Voyeage API
-    - Output of script ../../scripts/Semantic Scores.py
+    - Output of script ["Semantic Scores.py"](../../scripts/Semantic Scores.py)
 
 # Data Used When Performing Genre Field Match
 
-5.  File ./genre.csv
+5.  File ["genre.csv"](genre.csv)
     - 26347 rows
         - A single book can appear in multiple rows if multiple generic_genre
           classificatinos.  
