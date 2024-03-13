@@ -8,6 +8,16 @@ Jacob Peterson, Lawrie Brunswick, Priyam Gupta, Sue Boyd
 ##  Project Type
 Tool 
 
+## Table of Contents
+- [Introduction](#introduction)
+- [Questions of Interest](#questions-of-interest)
+- [Repository Structure](#repository-structure)
+- [Data Sources](#data-sources)
+- [Local Setup and Environment](#local-setup-and-environment)
+- [Examples](#examples)
+
+
+
 ## Questions of Interest
 ### MVP: 
 - What book should I read next?
@@ -26,6 +36,10 @@ Tool
 - We will create a simple UI for users to receive recommendations for books that they might like to read. 
 Users can input variables such as: previous book(s) that they have enjoyed, authors, titles, years, and/or similar plots, and the tool will make selections for other books they may wish to read. (Exact parameters tbd; part of our project will be to explore the optimal model and parameters for our rating system). 
 - (Stretch) The tool will also provide a link to purchasing the book on Amazon or other venues. 
+
+
+## Repository Structure
+<Insert Here>
 
 ## Data Sources 
 ### Book Ratings
@@ -57,7 +71,7 @@ Includes:
     - This API was used to augment CMU data with ISBN Numbers to help for matching with Book Ratings dataset
     - ISBN numbers obtained via Google APIs also included in [data_raw/complete_data.csv](data_raw/complete_data.csv)
   
-A description of data cleaning, joining and preprocessing can be found: 
+A description of data cleaning, joining and preprocessing can be found [Here](bookworm/data/Data_Processing_Slides.pdf)
 
 ## Local Setup and Environment
 
@@ -99,23 +113,23 @@ In order to generate the recommendation embeddings we utilized the [VoyageAI](ht
 
 Please create a local API KEY by following these steps:
 
-1. Click [Here](https://dash.voyageai.com/) to create your own API KEY.
+1. Make sure your current directory is set the 'bookworm' folder. If it is not please run this from within the `bookworm_rec` directory:
+```bash
+cd bookworm
+```
 
-2. Copy your new API key and run this command:
+2. Click [Here](https://dash.voyageai.com/) to create your own API KEY.
+
+3. Copy your new API key and run this command:
 ```bash
 export API_KEY="replace-with-your-api-key"
 ```
 This command is space specific i.e. there cannot be spaces before and after the equals. Make sure your new API KEY
 is in double quotes!
 
-3. To check that the API KEY was created successfully:
+4. To check that the API KEY was created successfully:
 ```bash
 echo $API_KEY
-```
-
-4. Make sure your current directory is set the 'bookworm' folder. If it is not please run this from within the `bookworm_rec` directory:
-```bash
-cd bookworm
 ```
 
 5. Okay now we are ready to run the application!
@@ -125,7 +139,7 @@ streamlit run app.py
 Go check out our application in your local browser!!!
 
 
-### Examples
+## Examples
 
 Here is a [video demonstration]() of our app!
 
