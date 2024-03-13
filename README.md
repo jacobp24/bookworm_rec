@@ -90,7 +90,7 @@ Refer to [Conda Installation](https://conda.io/projects/conda/en/latest/user-gui
 
 Make sure your current directory is set the 'bookworm_rec' folder. If it is not please run this code:
 ```bash
-cd bookworm_rec
+cd bookworm
 ```
 
 Now run the next command to create the `bookworm_env` Conda environment:
