@@ -30,7 +30,7 @@ Here is an example when you input Agatha Christie:
 
 ![Author-1](walkthrough_images/walkthrough_image1.jpg)
 
-OR There is an option "Most popular books by my favorite author" which generates recommened books only within that
+OR There is an option "Most popular books by my favorite author" which generates recommended books only within that
 requested author, sorted by a user-rating analysis.  Use the sliders at the bottom to exclude books that have lower ratings or not many reviews. Keep in mind
 this may return less than 10 results. 
 
@@ -48,7 +48,7 @@ Users can also input a description of a book they enjoyed and our model will giv
 Click on the "Books similar to my favorite plot" option, and search away!
     (Please be patient, it is doing work behind the scenes!)
 
-For example: You could search for "dectives solve murders from long ago"
+For example: You could search for "detectives solve murders from long ago"
 
 ![Plot1](walkthrough_images/WalkthroughImage6.png)
 
