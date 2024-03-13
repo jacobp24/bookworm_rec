@@ -46,8 +46,20 @@ st.set_page_config(
 # Define CSS for styling
 def local_css(file_name):
     """
-    DUMMY
+    Loads a local CSS file to style the Streamlit app.
+
+    This function reads a CSS file, converts it into a string, and then 
+    includes it in the Streamlit app using the `st.markdown` function. 
+    The CSS string is included in a `<style>` HTML tag and is marked as 
+    safe HTML, which allows the CSS to be rendered correctly by the browser.
+
+    Parameters:
+    file_name (str): The name of the CSS file to load.
+
+    Raises:
+    FileNotFoundError: If the CSS file cannot be found.
     """
+
     with open(file_name, encoding='utf-8') as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
