@@ -30,9 +30,9 @@ Before you begin, ensure you have met the following requirements:
 
 ## Files Description
 
-- `Embeddings.py`: This script processes a dataset of book summaries to generate embeddings using the voyageai API. It includes data cleaning, token counting, and embedding generation.
+- `embeddings.py`: This script processes a dataset of book summaries to generate embeddings using the voyageai API. It includes data cleaning, token counting, and embedding generation.
 
-- `Semantic Scores.py`: After generating embeddings, this script loads them and uses the k-Nearest Neighbors algorithm to find and analyze the closest summaries based on their semantic similarity.
+- `semantic_scores.py`: After generating embeddings, this script loads them and uses the k-Nearest Neighbors algorithm to find and analyze the closest summaries based on their semantic similarity.
 
 ## Running the Scripts
 
@@ -44,8 +44,12 @@ Before you begin, ensure you have met the following requirements:
     python embeddings.py
     ```
 
-3. After generating the embeddings, run `Semantic Scores.py` to perform the nearest neighbors analysis.
+3. After generating the embeddings, run `semantic_scores.py` to perform the nearest neighbors analysis.
 
     ```bash
-    python nearest_neighbors.py
+    python semantic_scores.py
     ```
+
+## Note on Test Coverage
+
+Please note that the scripts folder does not have test coverage because all these scripts are intended for one-time use. They were specifically designed to process a dataset for a singular analysis purpose, and as such, traditional unit or integration testing paradigms are not directly applicable.
