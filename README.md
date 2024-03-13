@@ -65,7 +65,7 @@ Includes:
     - ISBN numbers obtained via Google APIs also included in [data_raw/complete_data.csv](data_raw/complete_data.csv)
     - 
 ### Cleaning and Processing  
-A description of data cleaning, joining and preprocessing can be found [Here](bookworm/data/Data_Processing_Slides.pdf)
+A description of data cleaning, joining and preprocessing can be found [Here](bookworm/data/Data_Processing_Slides.pdf) and [Here](scripts/README.md).  A descripton of the final datasets used in production and testing can be found [Here](bookworm/data/README.md).
 
 ### Data Limitations
 This project is a proof of concept, executed on a small dataset (~13K books  total after data cleaning), with some data sparsity even within those books. 
@@ -90,7 +90,7 @@ Refer to [Conda Installation](https://conda.io/projects/conda/en/latest/user-gui
 
 Make sure your current directory is set the 'bookworm_rec' folder. If it is not please run this code:
 ```bash
-cd bookworm
+cd bookworm_rec
 ```
 
 Now run the next command to create the `bookworm_env` Conda environment:
@@ -115,9 +115,9 @@ you will need to do the following steps:
 In order to generate the recommendation embeddings we utilized the [VoyageAI](https://www.voyageai.com/) package.
 
 Please create a local API KEY by following these steps:
-1. Make sure your current directory is set the 'bookworm_rec' folder. If it is not please run this from within the `bookworm_rec` directory:
+1. Make sure your current directory is set to the 'bookworm' folder within 'bookworm_rec'. If it is not please run this from within the `bookworm_rec` directory:
 ```bash
-cd bookworm_rec
+cd bookworm
 ```
 2. Click [Here](https://dash.voyageai.com/) to create your own API KEY.
 
