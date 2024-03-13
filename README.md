@@ -63,8 +63,13 @@ Includes:
     - Book Title
     - This API was used to augment CMU data with ISBN Numbers to help for matching with Book Ratings dataset
     - ISBN numbers obtained via Google APIs also included in [data_raw/complete_data.csv](data_raw/complete_data.csv)
-  
+    - 
+### Cleaning and Processing  
 A description of data cleaning, joining and preprocessing can be found [Here](bookworm/data/Data_Processing_Slides.pdf)
+
+### Data Limitations
+This project is a proof of concept, executed on a small dataset (~13K books  total after data cleaning), with some data sparsity even within those books. 
+As such, some searches may return no or limited results. We'd love to see the work extended to a larger dataset! When a user tries to search based on a book or an author that is not in ourdataset, we let them know and encourage them to search another way. 
 
 ## Local Setup and Environment
 
