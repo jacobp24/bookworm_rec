@@ -28,17 +28,6 @@ With millions of books able to be read, it can be daunting to find the perfect b
 - Which book would be a good read related to my current book?
 - What books have similar plots to a book I liked?
 - What are the popular or trending books in a particular genre?
-- What books have people who share my interests rated highly? 
-
-### Time permitting (stretch)
- - Where can I buy that book or is it available?
- - Are there new releases or popular books that match my tastes?
- - Can I find hidden gems or underrated books that match my tastes?
-
-## Goal for Project Output 
-- We will create a simple UI for users to receive recommendations for books that they might like to read. 
-Users can input variables such as: previous book(s) that they have enjoyed, authors, titles, years, and/or similar plots, and the tool will make selections for other books they may wish to read. (Exact parameters tbd; part of our project will be to explore the optimal model and parameters for our rating system). 
-- (Stretch) The tool will also provide a link to purchasing the book on Amazon or other venues. 
 
 
 ## Repository Structure
@@ -74,8 +63,13 @@ Includes:
     - Book Title
     - This API was used to augment CMU data with ISBN Numbers to help for matching with Book Ratings dataset
     - ISBN numbers obtained via Google APIs also included in [data_raw/complete_data.csv](data_raw/complete_data.csv)
-  
+    - 
+### Cleaning and Processing  
 A description of data cleaning, joining and preprocessing can be found [Here](bookworm/data/Data_Processing_Slides.pdf)
+
+### Data Limitations
+This project is a proof of concept, executed on a small dataset (~13K books  total after data cleaning), with some data sparsity even within those books. 
+As such, some searches may return no or limited results. We'd love to see the work extended to a larger dataset! When a user tries to search based on a book or an author that is not in our dataset, we let them know and encourage them to search another way. 
 
 ## Local Setup and Environment
 
@@ -93,6 +87,11 @@ If git is not already downloaded, use the [Git Guide](https://github.com/git-gui
 For this repository we have set up a environment that can be ran locally and install Python dependencies with
 appropriate version requirements. Conda needs to be installed before running the next commands. 
 Refer to [Conda Installation](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) for further instructions.
+
+Make sure your current directory is set the 'bookworm_rec' folder. If it is not please run this code:
+```bash
+cd bookworm
+```
 
 Now run the next command to create the `bookworm_env` Conda environment:
 
@@ -116,12 +115,10 @@ you will need to do the following steps:
 In order to generate the recommendation embeddings we utilized the [VoyageAI](https://www.voyageai.com/) package.
 
 Please create a local API KEY by following these steps:
-
-1. Make sure your current directory is set the 'bookworm' folder. If it is not please run this from within the `bookworm_rec` directory:
+1. Make sure your current directory is set the 'bookworm_rec' folder. If it is not please run this from within the `bookworm_rec` directory:
 ```bash
-cd bookworm
+cd bookworm_rec
 ```
-
 2. Click [Here](https://dash.voyageai.com/) to create your own API KEY.
 
 3. Copy your new API key and run this command:
@@ -145,7 +142,7 @@ Go check out our application in your local browser!!!
 
 ## Examples
 
-Here is a [video demonstration]() of our app!
+Here is a [video demonstration](docs/demo_for_3_13.mp4) of our app!
 
 OR
 
