@@ -83,7 +83,7 @@ For this repository we have set up a environment that can be ran locally and ins
 appropriate version requirements. Conda needs to be installed before running the next commands. 
 Refer to [Conda Installation](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) for further instructions.
 
-Make sure your current directory is set the 'bookworm_rec' folder. If it is not please run this from within the `bookworm_rec` directory:
+Make sure your current directory is set the 'bookworm_rec' folder. If it is not please run this code:
 ```bash
 cd bookworm_rec
 ```
