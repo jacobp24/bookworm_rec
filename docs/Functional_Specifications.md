@@ -59,7 +59,7 @@ As such, some searches may return no or limited results. We'd love to see the wo
 ## Data Use Cases:
 
 ### Annie Author's Use Case1:
-** OBJECTIVE: ** Wants to find new books by her favorite author, Agatha Christie
+**OBJECTIVE:** Wants to find new books by her favorite author, Agatha Christie
 or books that are similar to books by Agatha Christie.  
 
 - **User:** Accesses recommendation tool
@@ -91,8 +91,8 @@ returned due to filters and small size of database.
 
 ![Author-2](../examples/walkthrough_images/walkthrough_image2.jpg)
 
-### Annie Author's Use Case2:
-** OBJECTIVE: ** Wants to find only books by author with last name Joyce.  
+### Annie Author's Use Case3:
+**OBJECTIVE:** Wants to find only books by author with last name Joyce.  
 
 - **User:** Accesses recommendation tool
 - **System:** Displays a drop down box asking how they want to search: (Author_Similar, Author_Favorite, Title, Plot, Genre)
@@ -103,18 +103,18 @@ returned due to filters and small size of database.
 - **System:** Displays “Search Now” box
 - **User:** Clicks “Search Now” box 
 - **System:** Displays message stating "Sorry, we can't find that author in our database. Perhaps you meant one of
-these authors: James Joyce?  Joyce Carey? 
+these authors: Joyce Carey? James Joyce?  
 ![Author-Misspell](../examples/walkthrough_images/WalkthroughImage7.png)
 
 ### Bob Books Use Case 1:
-OBJECTIVE: ** Wants to find books similar to a book he read several years ago about detectives solving
-cold_case murders, but he can't remember the title. 
+**OBJECTIVE:** Wants to find books similar to a book he read several years ago about detectives solving
+cold case murders, but he can't remember the title. 
 
 - **User:** Accesses recommendation tool
 - **System:** Displays a drop down box asking how they want to search (Author_Similar,  Author_Favorite, Title, Plot, Genre)
 - **User:** Selects Plot from drop down box 
-- **System:** Displays input box for Bobt to enter a plot summary   
-- **User:** Enters summary "Detectives solve murders from long ago"
+- **System:** Displays input box for Bob to enter a plot summary   
+- **User:** Enters summary "Detectives investigate murders from long ago"
 - **System:** Displays optional filters (e.g. minimum star rating)
 - **System:** Displays “Search Now” box 
 - **User:** Clicks “Search Now” box 
@@ -124,7 +124,7 @@ cold_case murders, but he can't remember the title.
 
 
 ### Bob Books Use Case 2:
-**OBJECTIVE: ** Wants to find books similar to a the book the Hunger Games. 
+**OBJECTIVE:** Wants to find books similar to the book the Hunger Games. 
 
 - **User:** Accesses recommendation tool
 - **System:** Displays a drop down box asking how they want to search (Author_Similar,  Author_Favorite, Title, Plot, Genre)
@@ -138,7 +138,7 @@ cold_case murders, but he can't remember the title.
 ![Title1](../examples/walkthrough_images/walkthrough_image4.jpg)
 
 ### Gerry Genre's Use Case 
-** OBJECTIVE: ** Wants to find new books in the Mystery Genre.
+**OBJECTIVE:** Wants to find new books in the Mystery Genre.
 - **User:** Accesses recommendation tool
 - **System:** Displays a drop down box asking how they want to search (Author_Similar,  Author_Favorite, Title,     Plot, Genre)
 - **User:** Selects Genre from drop down box 
@@ -149,5 +149,6 @@ cold_case murders, but he can't remember the title.
 - **System:** Displays “Search Now” box 
 - **User:** Clicks “Search Now” box 
 - **System:** Gives the top 10 highest rated books in the Mystery genre, sorted by rating 
+![Genre](../examples/walkthrough_images/walkthrough_image5.jpg)
 
 
