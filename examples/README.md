@@ -24,23 +24,20 @@ Click on the Search Mode and select an option to get started!
 By clicking on the option: "Books similar to those by my favorite author", our search tool will give the top 10
 recommended books by the inputed author AND books similar to your favorite author from our model.
 
-OR There is an option "Most popular books by my favorite author" which generates recommened books only within that
-requested author using rating analysis.
-
 Just input the author name, hit enter, and then press the "Search Now" button at the bottom!
 
 Here is an example when you input Agatha Christie:
 
 ![Author-1](walkthrough_images/walkthrough_image1.jpg)
 
-You can also use the sliders at the bottom to exclude books that have lower ratings or not many reviews. Keep in mind
+OR There is an option "Most popular books by my favorite author" which generates recommened books only within that
+requested author, sorted by a user-rating analysis.  Use the sliders at the bottom to exclude books that have lower ratings or not many reviews. Keep in mind
 this may return less than 10 results. 
 
 ![Author-2](walkthrough_images/walkthrough_image2.jpg)
 
 User's don't have to worry if they don't remember exactly how to spell the author's name. Most 
-typos and misspellings won't trick the tool.  And if we are unsure which author you mean, we'll 
-try to provie suggestions and get clarification. 
+typos and misspellings won't trick the tool.  And if we are unsure which author the user means, the tool will attempt to provide suggestions and get clarification. 
 
 ![Author-Misspell](walkthrough_images/WalkthroughImage7.png)
 
