@@ -42,7 +42,7 @@ User's don't have to worry if they don't remember exactly how to spell the autho
 typos and misspellings won't trick the tool.  And if we are unsure which author you mean, we'll 
 try to provie suggestions and get clarification. 
 
-![Author-Misspell](examples/walkthrough_images/WalkthroughImage6.png)
+![Author-Misspell](walkthrough_images/WalkthroughImage6.png)
 
 ## Book Suggestions by Personal Interests
 
