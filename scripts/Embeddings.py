@@ -1,79 +1,78 @@
+# Needed to do this for the use of a general exception to deal with broad API errors.
+# pylint: disable=W0718,W0621
 """
 This script processes a dataset of book summaries to generate and utilize embeddings
 for semantic analysis, leveraging the voyageai API for embedding generation.
 """
 
-# Import standard libraries
-import os
-import time
-
 # Import third-party libraries
 import pandas as pd
-import numpy as np
 import nltk
-from nltk.tokenize import word_tokenize
-import voyageai
+from voyageai import Client as VoyageClient
 
 # Download the 'punkt' tokenizer model
 nltk.download('punkt')
 
 # Load the dataset
-DATA_PATH = "C:/Users/stlp/Desktop/Geeky/Software/bookworm_local/attempt_1/complete_w_ratings.csv"
+DATA_PATH = "complete_w_ratings.csv"
 df = pd.read_csv(DATA_PATH)
 
-# Load the instance of the model
-client = voyageai.Client(api_key="")
+# Initialize the voyageai Client
+voyage_client = VoyageClient(api_key="")
 
-def token_count(summary):
+def token_count(summary, client):
     """
     Counts the number of tokens in a summary using the voyageai Client.
 
     Parameters:
     - summary: The text summary to count tokens in.
+    - client: The voyageai client instance.
 
     Returns:
     - The token count.
     """
     return client.count_tokens([summary])
 
-# Data cleaning and preprocessing
-df['token_count'] = df['summary'].apply(token_count)
+# Apply token counting
+df['token_count'] = df['summary'].apply(lambda x: token_count(x, voyage_client))
 filtered_df = df[df['token_count'] <= 4000]
 filtered_df.drop(columns=['token_count'], inplace=True)
 
 # Prepare texts for embedding generation
-texts = filtered_df['summary'].tolist()
+text_summaries = filtered_df['summary'].tolist()
 
-def generate_embeddings(texts, batch_size=24):
+def generate_embeddings(texts, client, batch_size=24):
     """
     Generates embeddings for a list of texts in batches.
 
     Parameters:
     - texts: A list of text summaries.
+    - client: The voyageai client instance.
     - batch_size: The size of each batch for processing.
 
     Returns:
     - A list of embeddings.
     """
-    client = voyageai.Client(api_key="")
-    embeddings = []
+    all_embeddings = []
     progress_count = 0
 
     for i in range(0, len(texts), batch_size):
         batch_texts = texts[i:i + batch_size]
         try:
-            batch_embeddings = client.embed(batch_texts, model="voyage-lite-02-instruct", input_type="document").embeddings
-            embeddings.extend(batch_embeddings)
-        except Exception:
-            process_individual_texts(batch_texts, embeddings, client)
+            batch_result = client.embed(batch_texts, model="voyage-lite-02-instruct",
+                                        input_type="document")
+            batch_embeddings = batch_result.embeddings
+            all_embeddings.extend(batch_embeddings)
+        except Exception:  # Use of a general exception to deal with broad API Errors.
+            process_individual_texts(batch_texts, all_embeddings, client)
 
         # Progress update
         progress = (progress_count / (len(texts) / batch_size)) * 100
-        print(f"\rProgress: {progress:.3f}%", end='')
+        print(f"\rProgress: {progress:.2f}%", end='')
         progress_count += 1
 
     print("\nDone!")
-    return embeddings
+    return all_embeddings
 
 def process_individual_texts(batch_texts, embeddings, client):
     """
@@ -84,17 +83,16 @@ def process_individual_texts(batch_texts, embeddings, client):
     - embeddings: The list to append embeddings to.
     - client: The voyageai client instance.
     """
-    batch_embeddings = []
     for text in batch_texts:
         try:
-            embedding = client.embed([text], model="voyage-lite-02-instruct", input_type="document").embeddings
-            batch_embeddings.extend(embedding)
-        except Exception:
-            batch_embeddings.append(None)
-    embeddings.extend(batch_embeddings)
+            result = client.embed([text], model="voyage-lite-02-instruct",
+                                  input_type="document")
+            embeddings.extend(result.embeddings)
+        except Exception:  # Use of a general exception to deal with broad API Errors
+            embeddings.append(None)
 
 # Generate embeddings
-embeddings = generate_embeddings(texts)
+embeddings = generate_embeddings(text_summaries, voyage_client)
 filtered_df["embeddings"] = embeddings
 
 # Save the processed dataframe

@@ -4,10 +4,10 @@ sets up and applies a k-Nearest Neighbors (kNN) algorithm to find similar items
 based on their embeddings, and saves/loads the inference results.
 """
 
-# Import necessary libraries
+# Corrected import order
+import ast  # For safe evaluation of strings containing Python literals
 import pandas as pd
 import numpy as np
-import ast  # For safe evaluation of strings containing Python literals
 from sklearn.neighbors import NearestNeighbors
 
 # Load dataset
@@ -51,23 +51,23 @@ np.save('indices_updated.npy', indices)
 distances_loaded = np.load('distances_updated.npy')
 indices_loaded = np.load('indices_updated.npy')
 
-def print_most_similar_items(distances, indices, item_index=0, num_items=1):
+def print_most_similar_items(loaded_distances, loaded_indices, item_index=0, num_items=1):
     """
     Prints the most similar items based on the kNN analysis.
 
     Parameters:
-    - distances: A NumPy array of distances between items.
-    - indices: A NumPy array of indices of the nearest neighbors.
+    - loaded_distances: A NumPy array of distances between items, loaded from file.
+    - loaded_indices: A NumPy array of indices of the nearest neighbors, loaded from file.
     - item_index: The index of the item for which to find similar items.
     - num_items: The number of similar items to display.
     """
-    most_similar_index = indices_loaded[item_index][1]  # Skip the item itself
-    similarity_score = 1 - distances_loaded[item_index][1]  # Convert distance to similarity
+    most_similar_index = loaded_indices[item_index][1]  # Skip the item itself
+    similarity_score = 1 - loaded_distances[item_index][1]  # Convert distance to similarity
     print(f"Most similar plot index: {most_similar_index}")
     print(f"Similarity score: {similarity_score}")
 
-    next_closest_indices = indices[item_index][1:num_items+1]
-    similarity_scores = 1 - distances_loaded[item_index][1:num_items+1]
+    next_closest_indices = loaded_indices[item_index][1:num_items+1]
+    similarity_scores = 1 - loaded_distances[item_index][1:num_items+1]
     print("Indices of the next closest items:", next_closest_indices)
     print(f"Similarity scores: {similarity_scores}")
 
