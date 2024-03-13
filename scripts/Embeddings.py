@@ -1,5 +1,5 @@
 # Needed to do this for the use of a general exception to deal with broad API errors.
-# pylint: disable=W0718,W0621
+# pylint: disable=W0718,W0621,E0401,C0103
 """
 This script processes a dataset of book summaries to generate and utilize embeddings
 for semantic analysis, leveraging the voyageai API for embedding generation.
