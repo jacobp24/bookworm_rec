@@ -1,73 +1,77 @@
-# %%
+"""
+This script loads datasets with embeddings, prepares the data for analysis,
+sets up and applies a k-Nearest Neighbors (kNN) algorithm to find similar items
+based on their embeddings, and saves/loads the inference results.
+"""
+
+# Import necessary libraries
 import pandas as pd
 import numpy as np
-
-import ast  # Safe evaluation of strings containing Python literals
-
+import ast  # For safe evaluation of strings containing Python literals
 from sklearn.neighbors import NearestNeighbors
 
-# %%
-df = pd.read_csv("data_with_embeddings.csv")
+# Load dataset
 df1 = pd.read_csv("complete_w_embeddings.csv")
 
-# %%
-df.columns
+# Display dataframe columns for inspection
+print(df1.columns)
 
-# %%
-df1.columns
+def convert_embeddings_to_list(embeddings_series):
+    """
+    Converts string representations of embeddings in a pandas Series to lists.
 
-# %%
-# Convert String Representations to Lists
-embeddings = df1['embeddings'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+    Parameters:
+    - embeddings_series: A pandas Series containing string representations of embeddings.
 
-# %%
-# Converting to numpy array
+    Returns:
+    - A pandas Series containing the embeddings as lists.
+    """
+    return embeddings_series.apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+
+# Convert string representations of embeddings to lists
+embeddings = convert_embeddings_to_list(df1['embeddings'])
+
+# Convert embeddings to a NumPy array
 X = np.array(embeddings.tolist())
 
-# %%
-X.shape
+print(f"Shape of the embeddings array: {X.shape}")
 
-# %%
-# setting up the kNN
+# Initialize and fit the k-Nearest Neighbors model
 knn = NearestNeighbors(n_neighbors=21, metric='cosine')
-
-# %%
 knn.fit(X)
 
-# %%
 # Find the k-nearest neighbors for each point
 distances, indices = knn.kneighbors(X)
 
-# %% [markdown]
-# # Inference
-
-# %%
+# Save distances and indices for later use
 np.save('distances_updated.npy', distances)
 np.save('indices_updated.npy', indices)
 
-# %%
+# Load distances and indices
 distances_loaded = np.load('distances_updated.npy')
 indices_loaded = np.load('indices_updated.npy')
 
-# %%
-# First plot inference
-most_similar_index = indices_loaded[0][1]  # [0] for the first plot, [1] to skip the plot itself
-similarity_score = 1 - distances_loaded[0][1]  # Convert distance to similarity
+def print_most_similar_items(distances, indices, item_index=0, num_items=1):
+    """
+    Prints the most similar items based on the kNN analysis.
 
-print(f"Most similar plot index: {most_similar_index}")
-print(f"Similarity score: {similarity_score}")
+    Parameters:
+    - distances: A NumPy array of distances between items.
+    - indices: A NumPy array of indices of the nearest neighbors.
+    - item_index: The index of the item for which to find similar items.
+    - num_items: The number of similar items to display.
+    """
+    most_similar_index = indices_loaded[item_index][1]  # Skip the item itself
+    similarity_score = 1 - distances_loaded[item_index][1]  # Convert distance to similarity
+    print(f"Most similar plot index: {most_similar_index}")
+    print(f"Similarity score: {similarity_score}")
 
-# %%
-next_10_closest_indices = indices[0][1:11]
-similarity_score = 1 - distances_loaded[0][1:11]
+    next_closest_indices = indices[item_index][1:num_items+1]
+    similarity_scores = 1 - distances_loaded[item_index][1:num_items+1]
+    print("Indices of the next closest items:", next_closest_indices)
+    print(f"Similarity scores: {similarity_scores}")
 
-print("Indices of the next 10 closest items:", next_10_closest_indices)
-print(f"Similarity score: {similarity_score}")
+# Example usage
+print_most_similar_items(distances_loaded, indices_loaded, item_index=0, num_items=10)
 
-# %%
-distances_loaded.shape
-
-# %%
-
-
-
+print(f"Shape of the loaded distances array: {distances_loaded.shape}")
