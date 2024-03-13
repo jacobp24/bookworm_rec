@@ -59,7 +59,7 @@ As such, some searches may return no or limited results. We'd love to see the wo
 ## Data Use Cases:
 
 ### Annie Author's Use Case1:
-- ** OBJECTIVE: ** Wants to find new books by her favorite author, Agatha Christie
+** OBJECTIVE: ** Wants to find new books by her favorite author, Agatha Christie
 or books that are similar to books by Agatha Christie.  
 
 - **User:** Accesses recommendation tool
@@ -75,7 +75,7 @@ or books that are similar to books by Agatha Christie.
 ![Author-1](walkthrough_images/walkthrough_image1.jpg)
 
 ### Annie Author's Use Case2:
-- ** OBJECTIVE: ** Wants to find only books by Christie, and that are highly rated.
+** OBJECTIVE: ** Wants to find only books by Christie, and that are highly rated.
 
 - **User:** Accesses recommendation tool
 - **System:** Displays a drop down box asking how they want to search: (Author_Similar, Author_Favorite, Title, Plot, Genre)
@@ -89,10 +89,10 @@ or books that are similar to books by Agatha Christie.
 - **System:** Displays books by Christie that meet Annie's rating filter requirements. Fewer than 10 books are
 returned due to filters and small size of database. 
 
-![Author-2](walkthrough_images/walkthrough_image2.jpg)
+![Author-2](../examples/walkthrough_images/walkthrough_image2.jpg)
 
 ### Annie Author's Use Case2:
-- ** OBJECTIVE: ** Wants to find only books by author with last name Joyce.  
+** OBJECTIVE: ** Wants to find only books by author with last name Joyce.  
 
 - **User:** Accesses recommendation tool
 - **System:** Displays a drop down box asking how they want to search: (Author_Similar, Author_Favorite, Title, Plot, Genre)
@@ -107,7 +107,7 @@ these authors: James Joyce?  Joyce Carey?
 ![Author-Misspell](walkthrough_images/WalkthroughImage7.png)
 
 ### Bob Books Use Case 1:
-- ** OBJECTIVE: ** Wants to find books similar to a book he read several years ago about detectives solving
+OBJECTIVE: ** Wants to find books similar to a book he read several years ago about detectives solving
 cold_case murders, but he can't remember the title. 
 
 - **User:** Accesses recommendation tool
@@ -123,8 +123,8 @@ cold_case murders, but he can't remember the title.
 ![Plot1](walkthrough_images/WalkthroughImage6.png)
 
 
-### Bob Books Use Case 1:
-- ** OBJECTIVE: ** Wants to find books similar to a the book the Hunger Games. 
+### Bob Books Use Case 2:
+**OBJECTIVE: ** Wants to find books similar to a the book the Hunger Games. 
 
 - **User:** Accesses recommendation tool
 - **System:** Displays a drop down box asking how they want to search (Author_Similar,  Author_Favorite, Title, Plot, Genre)
