@@ -72,7 +72,7 @@ or books that are similar to books by Agatha Christie.
 - **User:** Clicks “Search Now” box 
 - **System:** Displays top 10 recommended books that are by Agatha Christi/similar to books by Agatha Christie
 
-![Author-1](walkthrough_images/walkthrough_image1.jpg)
+![Author-1](../examples/walkthrough_images/walkthrough_image1.jpg)
 
 ### Annie Author's Use Case2:
 ** OBJECTIVE: ** Wants to find only books by Christie, and that are highly rated.
@@ -104,7 +104,7 @@ returned due to filters and small size of database.
 - **User:** Clicks “Search Now” box 
 - **System:** Displays message stating "Sorry, we can't find that author in our database. Perhaps you meant one of
 these authors: James Joyce?  Joyce Carey? 
-![Author-Misspell](walkthrough_images/WalkthroughImage7.png)
+![Author-Misspell](../examples/walkthrough_images/WalkthroughImage7.png)
 
 ### Bob Books Use Case 1:
 OBJECTIVE: ** Wants to find books similar to a book he read several years ago about detectives solving
@@ -120,7 +120,7 @@ cold_case murders, but he can't remember the title.
 - **User:** Clicks “Search Now” box 
 - **System:** Gives the top 10 books that most closely match that plot. 
 
-![Plot1](walkthrough_images/WalkthroughImage6.png)
+![Plot1](../examples/walkthrough_images/WalkthroughImage6.png)
 
 
 ### Bob Books Use Case 2:
@@ -135,7 +135,7 @@ cold_case murders, but he can't remember the title.
 - **System:** Displays “Search Now” box 
 - **User:** Clicks “Search Now” box 
 - **System:** Gives the top 10 books that most closely match the book the Hunger Games.
-![Title1](walkthrough_images/walkthrough_image4.jpg)
+![Title1](../examples/walkthrough_images/walkthrough_image4.jpg)
 
 ### Gerry Genre's Use Case 
 ** OBJECTIVE: ** Wants to find new books in the Mystery Genre.
