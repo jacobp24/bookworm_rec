@@ -1,3 +1,7 @@
+"""
+Initializes API KEY in the init
+"""
+
 import os
 from dotenv import load_dotenv
 
