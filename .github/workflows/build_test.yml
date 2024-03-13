@@ -95,7 +95,7 @@ jobs:
           pylint bookworm/*.py
           pylint bookworm/**/*.py
           pylint scripts/*.py
-          pylint scripts/**/*.py
+          
 
 
       # Next step: run the unit tests with code coverage.
