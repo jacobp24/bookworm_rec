@@ -42,7 +42,7 @@ User's don't have to worry if they don't remember exactly how to spell the autho
 typos and misspellings won't trick the tool.  And if we are unsure which author you mean, we'll 
 try to provie suggestions and get clarification. 
 
-![Author-Misspell](walkthrough_images/walkthrough_image7.jpg)
+![Author-Misspell](walkthrough_images/walkthroughImage7.jpg)
 
 ## Book Suggestions by Personal Interests
 
@@ -53,7 +53,7 @@ Click on the "Books similar to my favorite plot" option, and search away!
 
 For example: You could search for "dectives solve murders from long ago"
 
-![Plot1](walkthrough_images/walkthrough_image6.jpg)
+![Plot1](walkthrough_images/WalkthroughImage6.png)
 
 ### But what if I don't know the plot??
 
