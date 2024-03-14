@@ -65,7 +65,7 @@ Includes:
     - ISBN numbers obtained via Google APIs also included in [data_raw/complete_data.csv](data_raw/complete_data.csv)
     - 
 ### Cleaning and Processing  
-A description of data cleaning, joining and preprocessing can be found [Here](bookworm/data/Data_Processing_Slides.pdf) and [Here](scripts/README.md).  A descripton of the final datasets used in production and testing can be found [Here](bookworm/data/README.md).
+A description of data cleaning, joining and preprocessing can be found [Here](bookworm/data/Data_Slides.pdf) and [Here](scripts/README.md).  A descripton of the final datasets used in production and testing can be found [Here](bookworm/data/README.md).
 
 ### Data Limitations
 This project is a proof of concept, executed on a small dataset (~13K books  total after data cleaning), with some data sparsity even within those books. 
